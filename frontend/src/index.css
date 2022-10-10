@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700&display=swap");
+
+/* Đè lên style ant design */
+a {
+  color: #000 !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Nunito Sans", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 10px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #e0e3e7;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #fcd535;
+    border-radius: 100vh;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #f0b90b;
+  }
+  .preventselect {
+    user-select: none;
+  }
+}

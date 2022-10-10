@@ -1,0 +1,5769 @@
+swagger: "2.0"
+info:
+  description: "APIs of Logistic Web Service"
+  version: "1.0.0"
+  title: "Logistic Web Service"
+  contact:
+    email: "d.bed11@gptgdt.net"
+host: "localhost:8000"
+basePath: "/api"
+schemes:
+- "http"
+- "https"
+tags:
+- name: "auth"
+  description: "Endpoint Authentication"
+- name: "about"
+  description: "Endpoint AboutUs"
+- name: "contactUs"
+  description: "Endpoint ContactUs"
+- name: "tracking"
+  description: "Tracking feature"
+- name: "public"
+  description: "Public assets of web service"
+- name: "commitment"
+  description: "Endpoint Commitment"
+- name: "partner"
+  description: "Endpoint Partner"
+- name: "message"
+  description: "Endpoint Message"
+- name: "warehouse"
+  description: "Endpoint Warehouse"
+- name: "user"
+  description: "Endpoint User"
+- name: "car"
+  description: "Endpoint Car"
+- name: "prohibited-product"
+  description: "Endpoint Prohibited Product"
+- name: "road"
+  description: "Endpoint Road"
+- name: "bill"
+  description: "Endpoint Bill"
+- name: "product-shipment"
+  description: "Endpoint Product Shipment"
+- name: "participant"
+  description: "Endpoint Participant"
+- name: "quote"
+  description: "Endpoint Quote"
+- name: "order"
+  description: "Endpoint Order"
+- name: "product"
+  description: "Endpoint Product"
+- name: "career"
+  description: "Endpoint Career"
+- name: "department"
+  description: "Endpoint Department"
+- name: "applicant"
+  description: "Endpoint Applicant"
+- name: "feature"
+  description: "Endpoint Feature"
+- name: "consultancy"
+  description: "Endpoint Consultancy"
+- name: "notification"
+  description: "Endpoint Notification for user's realtime interaction"
+- name: "staff"
+  description: "Endpoint Staff"
+- name: "warehouse" 
+  description: "Endpoint Warehouse" 
+- name: "participant" 
+  description: "Endpoint Participant" 
+- name: "quote" 
+  description: "Endpoint Quote"
+- name: "service"
+  description: "Endpoint Service"
+- name: "distance"
+  description: "Endpoint Distance"
+- name: "price"
+  description: "Endpoint Price"
+- name: "priceList"
+  description: "Endpoint PriceList"
+- name: "customer"
+  description: "Endpoint Customer"
+- name: "receiver"
+  description: "Endpoint Receiver"
+paths:
+  /auth/verify-token:
+    post:
+      tags:
+      - "auth"
+      summary: "Verify the post token, if it's expired, refresh token"
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+      - in: body
+        name: token
+        required: true
+        schema:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+      responses:
+        200:
+          description: Verify token successfully.
+          schema:
+            type: object
+            example: {
+              "accessToken":"123456",
+              "user":{
+                "id":"userId",
+                "email":"email",
+                "phone":"phone",
+                "role":"role",
+              }
+            }
+        401:
+          description: Unauthorized.
+  /auth/register:
+    post:
+      tags:
+      - "auth"
+      summary: "Register customer"
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+      - in: body
+        name: customer
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+            password:
+              type: string
+            address:
+              type: string
+            description:
+              type: string
+            customer_type:
+              type: string
+              enum: ['business', 'passers', 'intermediary']
+            verify_op:
+              type: string
+              enum: ['email', 'phone']
+      responses:
+        200:
+          description: send otp code successfully.
+        400:
+          description: Send OTP failed.
+  /auth/verify-otp:
+    post:
+      tags:
+        - "auth"
+      summary: Verify OTP send through email/phone number.
+      consumes:
+        - application/json
+      parameters:
+      - in: body
+        name: otp
+        required: true
+        schema:
+          type: object
+          properties:
+            otp:
+              type: string
+      responses:
+        200:
+          description: user registered successfully.
+        400:
+          description: validate failed.
+  /auth/update-otp:
+    get:
+      tags:
+        - "auth"
+      summary: Update OTP send through email/phone number.
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: verify_op
+          type: string
+          required: true
+      responses:
+        200:
+          description: update otp successfully.
+        404:
+          description: verify option is invalid.
+        400:
+          description: Send OTP failed.
+  /auth/login:
+    post:
+      tags:
+        - "auth"
+      summary: Customer login with email/phone and password.
+      produces:
+        - application/json
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+      - in: body
+        name: user
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            phone:
+              type: string
+            password:
+              type: string
+      responses:
+        200:
+          description: Login successfully.
+          schema:
+            type: object
+            example: {
+              "accessToken":"string",
+              "refreshToken":"string",
+              "user": {
+                "id":"string",
+                "email":"string",
+                "phone":"string",
+                "role":{},
+              }
+            }
+        400:
+          description: email/phone or password is wrong.
+        403:
+          description: your role is not valid. access denied.
+  /auth/staff-login:
+    post:
+      tags:
+        - "auth"
+      summary: Staff login with email/phone and password.
+      produces:
+        - application/json
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+      - in: body
+        name: user
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            phone:
+              type: string
+            password:
+              type: string
+      responses:
+        200:
+          description: Login successfully.
+          schema:
+            type: object
+            example: {
+              "accessToken":"string",
+              "refreshToken":"string",
+              "user": {
+                "id":"string",
+                "email":"string",
+                "phone":"string",
+                "role":{},
+              }
+            }
+        400:
+          description: email/phone or password is wrong.
+        403:
+          description: your role is not valid. access denied.
+  /auth/forgot-pw:
+    post:
+      tags:
+        - auth
+      summary: help users renew their password
+      produces:
+        - application/json
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+      - in: body
+        name: info
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            phone:
+              type: string
+      responses:
+        200:
+          description: generate new password successfully.
+        400:
+          description: send new password failed.
+        404:
+          description: email/phone doesn't exist.
+  /auth/change-pw:
+    put:
+      tags:
+        - auth
+      summary: user change current password
+      produces:
+        - application/json
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+      - in: body
+        name: info
+        required: true
+        schema:
+          type: object
+          properties:
+            oldPw:
+              type: string
+            newPw:
+              type: string
+            verify_password:
+              type: string
+      responses:
+        200:
+          description: change your password successfully.
+        400:
+          description: current password isn't correct.
+      security:
+        - bearerAuth: []
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      summary: user log out
+      consumes:
+        - application/json
+      parameters:
+      - in: body
+        name: token
+        required: true
+        schema:
+          type: object
+          properties:
+            refreshToken:
+              type: string
+      responses:
+        200:
+          description: log out successfully. see you soon.
+        401:
+          description: refresh token is invalid.
+      security:
+        - bearerAuth: []
+  /admin/auth/register:
+    post:
+      tags:
+        - auth
+      summary: create a new staff
+      consumes:
+        - application/json
+      parameters:
+      - in: body
+        name: staff informations
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            password:
+              type: string
+            phone:
+              type: string
+            staff_type:
+              type: string
+              enum: ['admin','driver','shipper','storekeeper','staff']
+      responses:
+        200:
+          description: user registered successfully.
+        400:
+          description: user is exist
+      security:
+        - bearerAuth: []
+  /about:
+    get:
+      tags:
+        - about
+      summary: get aboutUs information
+      produces:
+        - application/json
+      responses:
+        200:
+          description: get about information successfully.
+          schema:
+            type: object
+            example: {
+              "description": "string",
+              "vision": "string",
+              "values": "string",
+              "logo": "path",
+              "banners": ["path1", "path2"],
+            }
+        400:
+          description: about information is not found.
+  /admin/about/logo:
+    post:
+      tags:
+        - about
+      summary: upload logo aboutUs
+      consumes:
+        - multipart/form-data
+      parameters:
+      - in: formData
+        name: logo
+        required: true
+        description: file
+        type: file
+      responses:
+        200:
+          description: upload logo successfully.
+      security:
+        - bearerAuth: []
+  /admin/about/banners:
+    post:
+      tags:
+        - about
+      summary: upload banners aboutUs
+      consumes:
+        - multipart/form-data
+      parameters:
+      - in: formData
+        name: banners
+        required: true
+        description: array of files
+        type: file
+      responses:
+        200:
+          description: upload banners successfully.
+      security:
+        - bearerAuth: []
+  /admin/about:
+    post:
+      tags:
+        - about
+      summary: update aboutUs informations
+      consumes:
+        - application/json
+      parameters:
+      - in: body
+        name: about informations
+        required: true
+        schema:
+          type: object
+          properties:
+            description:
+              type: string
+            vision:
+              type: string
+            values:
+              type: string
+      responses:
+        200:
+          description: set about-us information successfully.
+      security:
+        - bearerAuth: []
+  /contactUs:
+    get:
+      tags:
+        - contactUs
+      summary: get contactUs information
+      produces:
+        - application/json
+      responses:
+        200:
+          description: get contact information successfully.
+          schema:
+            type: object
+            example: {
+              "address":"string",
+              "phone":"phone",
+              "email":"email",
+              "facebook":"url",
+              "instagram":"url",
+              "tiktok":"url",
+              "youtube":"url",
+              "hr_mailbox": "email",
+            }
+        400:
+          description: contact information is not found.
+  /admin/contactUs:
+    post:
+      tags:
+        - contactUs
+      summary: update contactUs informations
+      consumes:
+        - application/json
+      parameters:
+      - in: body
+        name: contact informations
+        required: true
+        schema:
+          type: object
+          properties:
+            address:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            facebook:
+              type: string
+            instagram:
+              type: string
+            tiktok:
+              type: string
+            youtube:
+              type: string
+            hr_mailbox:
+              type: string
+      responses:
+        200:
+          description: set contact-us information successfully.
+      security:
+        - bearerAuth: []
+  /tracking/postage:
+    post:
+      tags:
+        - tracking
+      summary: customer look up a postage
+      produces:
+        - application/json
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+      - in: body
+        name: information
+        required: true
+        schema:
+          type: object
+          properties:
+            formProvince:
+              type: string
+            fromDistrict:
+              type: string
+            fromWard:
+              type: string
+            toProvince:
+              type: string
+            toDistrict:
+              type: string
+            toWard:
+              type: string
+            unit:
+              type: string
+              enum: ['kg','m3','ton']
+            quantity:
+              type: number
+            serviceId:
+              type: string
+            serviceName:
+              type: string
+      responses:
+        200:
+          description: calculate shipment fee successfully.
+          schema:
+            type: object
+            example: {
+              "result": 400000,
+            }
+        400:
+          description: the service is not exist. / the service don't support this road.
+  /public/uploads/{dirName}/{fileName}:
+    get:
+      tags:
+        - public
+      summary: get uploaded resource
+      parameters:
+      - in: path
+        name: dirName
+        type: string
+        required: true
+        description: directory name of request file
+      - in: path
+        name: fileName
+        type: string
+        required: true
+        description: file name of request file
+      responses:
+        200:
+          description: resource file downloaded
+          schema:
+            type: file
+  /public/{dirName}/{fileName}:
+    get:
+      tags:
+        - public
+      summary: get public assets
+      parameters:
+      - in: path
+        name: dirName
+        type: string
+        required: true
+        description: directory name of request file
+      - in: path
+        name: fileName
+        type: string
+        required: true
+        description: file name of request file
+      responses:
+        200:
+          description: resource file downloaded
+          schema:
+            type: file
+  /commitment:
+    get:
+      tags:
+        - "commitment"
+      summary: get commitments
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: limit
+          type: string
+          description: limit number of commitment
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (heading, -updatedAt)
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+      responses:
+        200:
+          description: get commitments successfully.
+          schema:
+            type: object
+            example: {
+              "heading": "string",
+              "logo": "path",
+              "detail": "string",              
+            }
+        400:
+          description: commitment is not found.
+  /commitment/{commitmentId}:
+    get:
+      tags:
+        - "commitment"
+      summary: get commitment by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: commitmentId
+          type: string
+          required: true
+          description: Id of a commitment 
+      responses:
+        200:
+          description: get commitment successfully.
+          schema:
+            type: object
+            example: {
+              "heading": "string",
+              "logo": "path",
+              "detail": "string",              
+            }
+        400:
+          description: commitment is not found.
+  /admin/commitment:
+    post:
+      tags:
+        - "commitment"
+      summary: "Create a new commitment"
+      consumes:
+        - multipart/form-data
+        - application/json
+      parameters:
+        - in: formData
+          name: heading
+          description: heading
+          type: string
+          required: true
+        - in: formData
+          name: detail
+          description: detail
+          type: string
+        - in: formData
+          name: logo
+          description: a logo commitment.
+          type: file
+      responses:
+        200:
+          description: Create commitment successfully.
+          schema:
+            type: object
+            example: {
+              "heading": "string",
+              "logo": "path",
+              "detail": "string",
+            }
+        400:
+          description: Create commitment failed.
+      security:
+        - bearerAuth: []
+  /admin/commitment/{commitmentId}:
+    put:
+      tags:
+        - "commitment"
+      summary: "Update a existing commitment"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: commitmentId
+          schema: 
+            type: string
+          required: true
+          description: commitment id
+        - in: formData
+          name: heading
+          description: heading
+          type: string
+        - in: formData
+          name: detail
+          description: detail
+          type: string
+        - in: formData
+          name: logo
+          description: a logo commitment.
+          type: file
+      responses:
+        200:
+          description: Update commitment successfully.
+          schema:
+            type: object
+            example: {
+              "heading": "string",
+              "logo": "path",
+              "detail": "string",
+            }
+        400:
+          description: Update commitment failed.
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - "commitment"
+      summary: "Delete a existing commitment"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: commitmentId
+          type: string
+          required: true
+          description: Id of a commitment 
+      responses:
+        200:
+          description: Delete commitment successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Update commitment failed.
+      security:
+        - bearerAuth: []
+  /partner:
+    get:
+      tags:
+        - "partner"
+      summary: get partners
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: pageSize
+          type: string
+          description: number of partner in a page  
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (name, -updatedAt)
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+      responses:
+        200:
+          description: get partners successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+            }
+        400:
+          description: partner is not found.
+  /partner/{partnerId}:
+    get:
+      tags:
+        - "partner"
+      summary: get partner by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: partnerId
+          type: string
+          required: true
+          description: Id of a partner 
+      responses:
+        200:
+          description: get partner successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+            }
+        400:
+          description: partnerId is not found.
+  /admin/partner:
+    post:
+      tags:
+        - "partner"
+      summary: "Create a new partner"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: name
+          description: a new partner.
+          type: string
+          required: true
+        - in: formData
+          name: logo
+          description: a logo commitment.
+          type: file  
+          required: true      
+      responses:
+        200:
+          description: Create partner successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+            }
+        400:
+          description: Create partner failed.
+      security:
+        - bearerAuth: []
+  /admin/partner/{partnerId}:
+    put:
+      tags:
+        - "partner"
+      summary: "Update a existing commitment"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: partnerId
+          type: string
+          required: true
+          description: partner id
+        - in: formData
+          name: name
+          description: a new partner.
+          type: string
+        - in: formData
+          name: logo
+          description: a logo commitment.
+          type: file  
+      responses:
+        200:
+          description: Update partner successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+            }
+        400:
+          description: Update partner failed.
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - "partner"
+      summary: "Delete a existing partner"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: partnerId
+          type: string
+          required: true
+          description: partner Id
+      responses:
+        200:
+          description: Delete partner successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Update partner failed.
+      security:
+        - bearerAuth: []
+  /admin/message:
+    get:
+      tags:
+        - "message"
+      summary: get message
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: pageSize
+          type: string
+          description: number of message in a page          
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (name, -updatedAt)
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+        - in: query
+          name: status
+          type: string
+          description: filter by status (seen/unseen)
+      responses:
+        200:
+          description: get message successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",    
+              "message": "string",          
+            }
+        400:
+          description: commitment is not found.  
+      security:
+        - bearerAuth: []
+  /admin/message/{messageId}:
+    get:
+      tags:
+        - "message"
+      summary: get message by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: messageId
+          type: string
+          required: true
+          description: Id of a message 
+      responses:
+        200:
+          description: get message successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",    
+              "message": "string",          
+            }          
+        400:
+          description: message is not found.    
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "message"
+      summary: "Update a existing message"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: messageId
+          schema: 
+            type: string
+          required: true
+          description: message id
+        - in: body
+          name: message
+          description: a existing message.
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string 
+              phone: 
+                type: string
+              message:
+                type: string 
+      responses:
+        200:
+          description: Update message successfully.
+        400:
+          description: Update message failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "message"
+      summary: "Delete a existing message"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: messageId
+          type: string
+          required: true
+          description: Id of a message 
+      responses:
+        200:
+          description: Delete message successfully.
+        400:
+          description: Update message failed.
+      security:
+        - bearerAuth: []
+  /message:
+    post:
+      tags:
+        - "message"
+      summary: "Create a new message"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: message
+          description: a new message.
+          schema:
+            type: object
+            required:
+              - name, email, phone, message
+            properties:
+              name:
+                type: string
+              email:
+                type: string 
+              phone: 
+                type: string
+              message:
+                type: string 
+      responses:
+        200:
+          description: Send message successfully.
+        400:
+          description: Create message failed.   
+  /user:
+    get:
+      tags:
+        - "user"
+      summary: get user
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: keyword
+          type: string
+          description: keyword of users 
+        - in: query
+          name: page
+          type: string
+          description: number of page 
+        - in: query
+          name: pageSize
+          type: string
+          description: number of page size 
+      responses:
+        200:
+          description: get user successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+            }
+        400:
+          description: user is not found.
+  /user/{userId}:
+    get:
+      tags:
+        - "user"
+      summary: get user by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          type: string
+          required: true
+          description: Id of a user 
+      responses:
+        200:
+          description: get user successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+            }
+        400:
+          description: UserId is not found.  
+        
+  /user/staff/{userId}:
+    put:
+      tags:
+        - "user"
+      summary: "Update a existing staff"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          schema: 
+            type: string
+          required: true
+          description: user id
+        - in: formData
+          name: user
+          description: a existing user.
+          schema:
+            type: object
+            required:
+              - name
+              - email
+              - phone
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                name:           
+                  type: string
+      responses:
+        200:
+          description: Update staff successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+            }
+        400:
+          description: Update staff failed.
+
+  /user/customer/{userId}:
+    put:
+      tags:
+        - "user"
+      summary: "Update a existing customer"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          schema: 
+            type: string
+          required: true
+          description: user id
+        - in: formData
+          name: customer
+          description: a existing customer.
+          schema:
+            type: object
+            required:
+              - name
+              - email
+              - phone
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                name:           
+                  type: string
+      responses:
+        200:
+          description: Update staff successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+            }
+        400:
+          description: Update staff failed.
+  /admin/user/active/{userId}:
+    put:
+      tags:
+        - "user"
+      summary: "Update a active user"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          schema: 
+            type: string
+          required: true
+          description: user id
+        - in: formData
+          name: user
+          description: a existing user.
+          schema:
+            type: object
+            required:
+              - isActive
+            properties:
+              isActive:
+                type: string
+             
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                name:           
+                  type: string
+      responses:
+        200:
+          description: Update active user successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+              "isActive": "string",
+            }
+        400:
+          description: Update active user failed.
+      security:
+        - bearerAuth: []
+  
+  /user/customer/{userId}:
+    put:
+      tags:
+        - "user"
+      summary: "Update a existing customer"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: userId
+          schema: 
+            type: string
+          required: true
+          description: user id
+        - in: formData
+          name: customer
+          description: a existing customer.
+          schema:
+            type: object
+            required:
+              - name
+              - email
+              - phone
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                name:           
+                  type: string
+      responses:
+        200:
+          description: Update staff successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+            }
+        400:
+          description: Update staff failed.
+
+  /admin/user/{userId}:  
+    delete:
+        tags:
+          - "user"
+        summary: "Delete a existing user"
+        produces:
+          - application/json
+        parameters:
+          - in: path
+            name: userId
+            type: string
+            required: true
+            description: user Id
+        responses:
+          200:
+            description: Delete user successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      description: Success message
+          400:
+            description: Update user failed.  
+        security:
+          - bearerAuth: []  
+  /admin/car:
+    get:
+      tags:
+        - "car"
+      summary: get cars
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: car_type
+          type: string
+          description: car_type of car (ex 8_ton, 20_ton)
+        - in: query
+          name: plate
+          type: string
+          description: plate of car 
+        - in: query
+          name: page
+          type: string
+          description: number of page 
+        - in: query
+          name: pageSize
+          type: string
+          description: number of page size 
+      responses:
+        200:
+          description: get car successfully.
+          schema:
+            type: object
+            example: {
+                "plate": "string",
+                "car_type": "string",
+                "volumn": "string",
+                "tonnage": "string",
+            }
+        400:
+          description: car in not found.
+      security:
+        - bearerAuth: []
+  
+  /admin/car/{carId}:
+    get:
+      tags:
+        - "car"
+      summary: get car by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: carId
+          type: string
+          required: true
+          description: Id of a car 
+      responses:
+        200:
+          description: get car successfully.
+          schema:
+            type: object
+            example: {
+                "plate": "string",
+                "car_type": "string",
+                "volumn": "string",
+                "tonnage": "string",
+            }
+        400:
+          description: CarId is not found.
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "car"
+      summary: Admin update road 
+      produces:
+        - application/json
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: carId
+          type: string
+          required: true
+          description: Id of an car 
+        - in: body
+          name: road
+          description: update car information
+          schema:
+            type: object
+            required:
+              - plate
+              - car_type 
+              - volumn
+              - tonnage
+              - car_fleet
+              - seri
+              - expired
+            properties:
+              plate: 
+                  type: string
+              car_type:
+                type: string
+                enum: ['8_ton', '20_ton']
+              volumn: 
+                  type: number
+              tonnage:
+                  type: number
+              car_fleet:
+                  type: string
+              seri:
+                  type: string
+              expired:
+                  type: string
+      responses:
+        200:
+          description: Update car successfully.
+          schema:
+            type: object
+            example: {
+                "plate": "string",
+                "car_type": "string",
+                "volumn": "string",
+                "tonnage": "string",
+            }
+        400:
+          description: road cannot be found.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "car"
+      summary: "Delete a existing car"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: carId 
+          type: string
+          required: true
+          description: car Id
+      responses:
+        200:
+          description: Delete car successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete car failed.
+      security:
+        - bearerAuth: []
+
+  /admin/car/create:
+    post:
+      tags:
+        - "car"
+      summary: "Create a new car"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: road        
+          description: a new car.
+          schema:
+            type: object
+            required:
+              - plate
+              - car_type 
+              - volumn
+              - tonnage
+              - car_fleet
+              - seri
+              - expired
+            properties:
+              plate: 
+                  type: string
+              car_type:
+                type: string
+                enum: ['8_ton', '20_ton']
+              volumn: 
+                  type: number
+              tonnage:
+                  type: number
+              car_fleet:
+                  type: string
+              seri:
+                  type: string
+              expired:
+                  type: string
+      responses:
+        200:
+          description: Create car successfully.
+          schema:
+            type: object
+            example: {
+                "plate": "string",
+                "car_type": "string",
+                "volumn": "string",
+                "tonnage": "string",
+            }
+        400:
+          description: Create car failed.
+      security:
+        - bearerAuth: []
+
+  /prohibited-product:
+    get:
+      tags:
+        - "prohibited-product"
+      summary: get prohibited products
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: keyword
+          type: string
+          description: keyword of prohibited product 
+        - in: query
+          name: page
+          type: string
+          description: number of page 
+        - in: query
+          name: pageSize
+          type: string
+          description: number of page size 
+      responses:
+        200:
+          description: get prohibited product successfully.
+          schema:
+            type: object
+            example: {
+                "name": "string",
+                "detail": "string",
+                "image": "path",
+            }
+        400:
+          description: Prohibited product in not found.    
+  /prohibited-product/{id}:
+    get:
+      tags:
+        - "prohibited-product"
+      summary: get prohibited product by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Id of a prohibited product 
+      responses:
+        200:
+          description: get prohibited product successfully.
+          schema:
+            type: object
+            example: {
+                "name": "string",
+                "detail": "string",
+                "image": "path",
+            }
+        400:
+          description: Id is not found. 
+
+  /admin/prohibited-product/create:
+    post:
+      tags:
+        - "prohibited-product"
+      summary: "Create a new prohibited product"
+      consumes:
+        - application/json
+      parameters:
+        - in: formData
+          name: name
+          type: string
+          required: true
+          description: name of prohibited product
+        - in: formData
+          name: detail
+          type: string
+          required: true
+          description: detail of prohibited product
+        - in: formData
+          name: image
+          type: file
+          description: Image of prohibited product
+      responses:
+        200:
+          description: Create prohibited product successfully.
+          schema:
+            type: object
+            example: {
+                "name": "string",
+                "detail": "path",
+                "image": "string",
+            }
+        400:
+          description: Create prohibited product failed.
+      security:
+        - bearerAuth: []
+  /admin/prohibited-product/{id}:
+    put:
+      tags:
+        - "prohibited-product"
+      summary: "Update a existing prohibited product"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: prohibited product id
+        - in: formData
+          name: name
+          type: string
+          description: name of prohibited product
+        - in: formData
+          name: detail
+          type: string
+          description: detail of prohibited product
+        - in: formData
+          name: image
+          type: file
+          description: Image of prohibited product
+      responses:
+        200:
+          description: Update prohibited product successfully.
+          schema:
+            type: object
+            example: {
+                "name": "string",
+                "detail": "string",
+                "image": "path",
+            }
+        400:
+          description: Update prohibited product failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "prohibited-product"
+      summary: "Delete a existing prohibited product"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id 
+          type: string
+          required: true
+          description: prohibited product Id
+      responses:
+        200:
+          description: Delete prohibited product successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Update prohibited product failed.
+      security:
+        - bearerAuth: []
+  
+  /admin/road:
+    get:
+      tags:
+        - "road"
+      summary: get roads
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of road on a page
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: keyword
+          type: string
+          description: keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by
+        - in: query
+          name: distance
+          type: string
+          description:  distance
+        - in: query
+          name: origin
+          type: string
+          description: origin
+        - in: query
+          name: destination
+          type: string
+          description:  destination
+      responses:
+        200:
+          description: get road successfully.
+          schema:
+            type: object
+            example: {
+              "distance": "string",
+              "origin": "string",
+              "destination": "string",
+            }
+        400:
+          description: road in not found.
+      security:
+        - bearerAuth: []
+
+  /admin/road/{roadId}:
+    get:
+      tags:
+        - "road"
+      summary: get road by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: roadId
+          type: string
+          required: true
+          description: Id of a road 
+      responses:
+        200:
+          description: get road successfully.
+          schema:
+            type: object
+            example: {
+              "distance": "string",
+              "origin": "string",
+              "destination": "string",
+            }
+        400:
+          description: RoadId is not found. 
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "road"
+      summary: Admin update road 
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: roadId
+          type: string
+          required: true
+          description: Id of an road 
+        - in: body
+          name: road
+          description: a new road.
+          schema:
+            type: object
+            properties:
+              distance: 
+                  type: number
+              origin:
+                  type: string
+              destination: 
+                  type: string
+      responses:
+        200:
+          description: Update road  successfully.
+          schema:
+            type: object
+            example: {
+              "distance": "string",
+              "origin": "string",
+              "destination": "string",
+            }
+        400:
+          description: road cannot be found.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "road"
+      summary: "Delete an existing road"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: roadId
+          type: string
+          required: true
+          description: Id of an road 
+      responses:
+        200:
+          description: Delete road successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete road failed.
+      security:
+          - bearerAuth: []
+
+  /admin/road/create:
+    post:
+      tags:
+        - "road"
+      summary: "Create a new road"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: road
+          description: a new road.
+          schema:
+            type: object
+            required:
+              - distance
+              - origin 
+              - destination
+            properties:
+              distance:           
+                  type: number
+              origin: 
+                  type: string
+              destination: 
+                  type: string
+      responses:
+        200:
+          description: Create road successfully.
+          schema:
+            type: object
+            example: {
+              "distance": "string",
+              "origin": "string",
+              "destination": "string",
+            }
+        400:
+          description: Create road failed. 
+      security:
+        - bearerAuth: []
+
+  /admin/product-shipment:
+    get:
+      tags:
+        - "product-shipment"
+      summary: get product-shipment
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of bill on a page
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: keyword
+          type: string
+          description: keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+        - in: query
+          name: product_id
+          type: string
+          description:  product_id
+      responses:
+        200:
+          description: get product shipment successfully.
+          schema:
+            type: object
+            example: {
+              "quantity": "string",
+              "product_id": "string",
+            }
+        400:
+          description: product shipment in not found.
+      security:
+        - bearerAuth: []
+
+  /admin/product-shipment/{id}:
+    get:
+      tags:
+        - "product-shipment"
+      summary: get product-shipment by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Id of a product-shipment 
+      responses:
+        200:
+          description: get product-shipment successfully.
+          schema:
+            type: object
+            example: {
+              "quantity": "string",
+              "product_id": "string",
+            }
+        400:
+          description: product-shipmentID is not found. 
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "product-shipment"
+      summary: Admin update product-shipment 
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Id of an product-shipment 
+        - in: body
+          name: product-shipment
+          description: Update product-shipment.
+          schema:
+            type: object
+            required:
+              - quantity
+              - product_id
+            properties:
+              quantity:
+                type: number 
+              product_id:
+                type: string
+      responses:
+        200:
+          description: Update bill  successfully.
+          schema:
+            type: object
+            example: {
+                "quantity": "string",
+                "product_id": "string",
+            }
+        400:
+          description: product-shipment cannot found.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "product-shipment"
+      summary: "Delete an existing product-shipment"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Id of an product-shipment 
+      responses:
+        200:
+          description: Delete product-shipment successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete product-shipment failed.
+      security:
+          - bearerAuth: []
+
+  /admin/product-shipment/create/{product_id}:
+    post:
+      tags:
+        - "product-shipment"
+      summary: "Create a new product-shipment"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: product_id
+          type: string
+          required: true
+          description: Id of an product
+        - in: body
+          name: product-shipment
+          description: a new product-shipment.
+          schema:
+            type: object
+            properties:
+              quantity:
+                type: number 
+      responses:
+        200:
+          description: Create product shipment successfully.
+          schema:
+            type: object
+            example: {
+              "quantity": "string",
+            }
+        400:
+          description: Create product shipment failed. 
+      security:
+        - bearerAuth: []
+
+  /admin/bill:
+    get:
+      tags:
+        - "bill"
+      summary: get bills
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of bill on a page
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: keyword
+          type: string
+          description: keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by
+        - in: query
+          name: service
+          type: string
+          description:  service
+        - in: query
+          name: road
+          type: string
+          description:  road
+        - in: query
+          name: car
+          type: string
+          description:  car
+        - in: query
+          name: driver
+          type: string
+          description:  driver
+        - in: query
+          name: status
+          type: string
+          description:  status (ex waiting, processing, completed)
+      responses:
+        200:
+          description: get bill successfully.
+          schema:
+            type: object
+            example: {
+              "service": "string",
+              "road": "string",
+              "car": "string",
+              "driver": "string",
+              "product_shipment": "string",
+              "status": "string",
+            }
+        400:
+          description: bill in not found.
+      security:
+        - bearerAuth: []
+
+  /admin/bill/{billId}:
+    get:
+      tags:
+        - "bill"
+      summary: get bill by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: billId
+          type: string
+          required: true
+          description: Id of a bill 
+      responses:
+        200:
+          description: get bill successfully.
+          schema:
+            type: object
+            example: {
+              "service": "string",
+              "road": "string",
+              "car": "string",
+              "driver": "string",
+              "product_shipment": "string",
+              "status": "string",
+            }
+        400:
+          description: billId is not found. 
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "bill"
+      summary: Admin update bill 
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: billId
+          type: string
+          required: true
+          description: Id of an bill 
+        - in: body
+          name: bill
+          description: a new bill.
+          schema:
+            type: object
+            required:
+              - product_shipment
+            properties:
+              service:
+                type: string 
+              road:
+                type: string
+              car:
+                type: string 
+              driver:
+                type: string 
+              product_shipment:
+                type: string 
+              status:
+                type: string
+                enum: ['waiting', 'accepted', 'processing', 'completed', 'refused']
+      responses:
+        200:
+          description: Update bill  successfully.
+          schema:
+            type: object
+            example: {
+              "service": "string",
+              "road": "string",
+              "car": "string",
+              "driver": "string",
+              "product_shipment": "string",
+              "status": "string",
+            }
+        400:
+          description: bill cannot be found.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "bill"
+      summary: "Delete an existing bill"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: billId
+          type: string
+          required: true
+          description: Id of an bill 
+      responses:
+        200:
+          description: Delete bill successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete bill failed.
+      security:
+          - bearerAuth: []
+
+  /admin/bill/create:
+    post:
+      tags:
+        - "bill"
+      summary: "Create a new bill"
+      consumes:
+        - application/json
+      parameters:         
+        - in: body      
+          name: bill
+          description: a new bill.
+          schema:
+            type: object
+            properties:
+              service:
+                type: string 
+              road:
+                type: string
+              car:
+                type: string 
+              driver:
+                type: string 
+              actual_fuel:
+                type: number 
+              theoretical_fuel: 
+                type: number 
+              status:
+                type: string
+                enum: ['waiting', 'accepted', 'processing', 'completed', 'refused']
+      responses:
+        200:
+          description: Create bill successfully.
+          schema:
+            type: object
+            example: {
+              "service": "string",
+              "road": "string",
+              "car": "string",
+              "driver": "string",
+              "actual_fuel": "number",
+              "theoretical_fuel": "number",
+              "status": "string",
+            }
+        400:
+          description: Create bill failed. 
+      security:
+        - bearerAuth: []
+  
+  /admin/bill/product_shipments/{billId}:
+    post:
+      tags:
+        - "bill"
+      summary: "Update a turnover, shipment of bill"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: billId
+          type: string
+          required: true
+          description: Id of an bill 
+        - in: body
+          name: bill
+          description: a new bill.
+          schema:
+            type: object
+            properties:
+              shipment:
+                type: string 
+              turnover:
+                type: number
+      responses:
+        200:
+          description: Update bill successfully.
+          schema:
+            type: object
+            example: {
+              "shipment": "string",
+              "turnover": "number",
+            }
+        400:
+          description: Update bill failed. 
+      security:
+        - bearerAuth: []
+
+  /admin/consultancy:
+    get:
+      tags:
+        - "consultancy"
+      summary: get consultancy
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: pageSize
+          type: string
+          description: number of consultancy in a page 
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+        - in: query
+          name: status
+          type: string
+          description: filter by value true/false
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by field, -updatedAt        
+      responses:
+        200:
+          description: get consultancy successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+              "service" : "string",
+              "fulladdress" : "string",
+              "parcel": "string",
+              "quantity": number,    
+            }
+        400:
+          description: consultancy is not found.  
+      security:
+        - bearerAuth: []
+  /admin/consultancy/{consultancyId}:
+    get:
+      tags:
+        - "consultancy"
+      summary: get consultancy by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: consultancyId
+          type: string
+          required: true
+          description: Id of a consultancy 
+      responses:
+        200:
+          description: get consultancy successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "email": "string",
+              "phone": "string",
+              "service" : "string",
+              "fulladdress" : "string",
+              "parcel": "string",
+              "quantity": "string",    
+            }          
+        400:
+          description: consultancy is not found.    
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "consultancy"
+      summary: "Update a existing consultancy"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: consultancyId
+          schema: 
+            type: string
+          required: true
+          description: consultancy id
+        - in: body
+          name: consultancy
+          description: a existing consultancy.
+          schema:
+            type: object
+            properties:
+              service:
+                type: string
+              name:
+                type: string
+              email:
+                type: string 
+              phone: 
+                type: string              
+              fulladdress:
+                type: string 
+              parcel: 
+                type: string
+              quantity:
+                type: number 
+              solved_status:
+                type: boolean
+
+      responses:
+        200:
+          description: Update consultancy successfully.
+        400:
+          description: Update consultancy failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "consultancy"
+      summary: "Delete a existing consultancy"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: consultancyId
+          type: string
+          required: true
+          description: Id of a consultancy 
+      responses:
+        200:
+          description: Delete consultancy successfully.
+        400:
+          description: Update consultancy failed.
+      security:
+        - bearerAuth: []
+  /consultancy:
+    post:
+      tags:
+        - "consultancy"
+      summary: "Create a new consultancy"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: consultancy
+          description: a new consultancy.
+          schema:
+            type: object            
+            properties:
+              service:
+                type: string
+              name:
+                type: string               
+              email:
+                type: string 
+              phone: 
+                type: string
+              fulladdress:
+                type: string 
+              parcel: 
+                type: string
+              quantity:
+                type: number 
+      responses:
+        200:
+          description: Send consultancy successfully.
+        400:
+          description: Create consultancy failed.   
+  /admin/warehouse:
+    post:
+      tags:
+        - "warehouse"
+      summary: "Create a new warehouse"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: warehouse
+          description: a new warehouse.
+          schema:
+            type: object      
+            required: 
+            - name, street, ward, district, province, phone     
+            properties:
+              name:
+                type: string
+              phone: 
+                type: string
+              street:
+                type: string               
+              ward:
+                type: string 
+              district: 
+                type: string
+              province:
+                type: string 
+      responses:
+        200:
+          description: Create new warehouse successfully.
+        400:
+          description: Create warehouse failed.
+      security:
+        - bearerAuth: []
+  /admin/warehouse/{warehouseId}:
+    put:
+      tags:
+        - "warehouse"
+      summary: "Update a existing warehouse"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: warehouseId
+          schema: 
+            type: string
+          required: true
+          description: warehouse id
+        - in: body
+          name: warehouse
+          description: a existing warehouse.
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              phone: 
+                type: string
+              street:
+                type: string               
+              ward:
+                type: string 
+              district: 
+                type: string
+              province:
+                type: string               
+      responses:
+        200:
+          description: Update warehouse successfully.
+        400:
+          description: Update warehouse failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "warehouse"
+      summary: "Delete a existing warehouse"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: warehouseId
+          type: string
+          required: true
+          description: Id of a warehouse 
+      responses:
+        200:
+          description: Delete warehouse successfully.
+        400:
+          description: Delete warehouse failed.
+      security:
+        - bearerAuth: []
+  /warehouse:
+    get:
+      tags:
+        - "warehouse"
+      summary: get warehouse
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: pageSize
+          type: string
+          description: number of warehouse in a page 
+        - in: query
+          name: district
+          type: string
+          description: district
+        - in: query
+          name: province
+          type: string
+          description: province
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (name, -updatedAt)
+      responses:
+        200:
+          description: get warehouse successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "phone": "string",    
+              "street": "string",   
+              "ward" : "string",
+              "district": "string",
+              "province": "string",
+              "lon": "string",
+              "lat": "string",       
+            }
+        400:
+          description: warehouse is not found.  
+  /warehouse/{warehouseId}:
+    get:
+      tags:
+        - "warehouse"
+      summary: get warehouse by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: warehouseId
+          type: string
+          required: true
+          description: Id of a warehouse 
+      responses:
+        200:
+          description: get warehouse successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "phone": "string",    
+              "street": "string",   
+              "ward" : "string",
+              "district": "string",
+              "province": "string",
+              "lon": "string",
+              "lat": "string",       
+            }          
+        400:
+          description: warehouse is not found.    
+  /participant:
+     get:
+      tags:
+        - "participant"
+      summary: get all participant
+      produces:
+        - application/json
+      parameters:        
+        - in: query
+          name: limit
+          type: string
+          description: number of participant in a page         
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (name, -updatedAt)
+      responses:
+        200:
+          description: get participant successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "banner": "path",    
+              "description": "string", 
+            }
+        400:
+          description: participant is not found. 
+  /participant/{participantId}:
+    get:
+      tags:
+        - "participant"
+      summary: get participant by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: participantId
+          type: string
+          required: true
+          description: Id of a participant 
+      responses:
+        200:
+          description: get participant successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "banner": "path",    
+              "description": "string",     
+            }          
+        400:
+          description: participant is not found. 
+  /participant/service/{serviceId}:
+    get:
+      tags:
+        - "participant"
+      summary: get list of participants by serviceId
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+      responses:
+        200:
+          description: get participant successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "banner": "path",    
+              "description": "string",     
+            }          
+        400:
+          description: participant is not found.
+  /admin/participant/{serviceId}:
+    post:
+      tags:
+        - "participant"
+      summary: "Create a new participant"
+      consumes:
+        - multipart/form-data
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+        - in: formData
+          name: name
+          description: name of participant.
+          type: string  
+          required: true
+        - in: formData
+          name: description
+          description: description of participant.
+          type: string  
+          required: true
+        - in: formData
+          name: banner
+          description: banner of participant.
+          type: file  
+      responses:
+        200:
+          description: Create participant successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "banner": "path",    
+              "description": "string",     
+            }        
+        400:
+          description: Create participant failed.
+      security:
+        - bearerAuth: []
+  /admin/participant/{participantId}:
+    put:
+      tags:
+        - "participant"
+      summary: "Create a new participant"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: participantId
+          type: string
+          required: true
+          description: Id of a participant          
+        - in: formData
+          name: name
+          description: name of participant.
+          type: string  
+        - in: formData
+          name: description
+          description: description of participant.
+          type: string  
+        - in: formData
+          name: banner
+          description: banner of participant.
+          type: file            
+      responses:
+        200:
+          description: Create participant successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "banner": "path",    
+              "description": "string",     
+            }        
+        400:
+          description: Create participant failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "participant"
+      summary: "Delete a existing participant"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: participantId
+          type: string
+          required: true
+          description: Id of a participant 
+      responses:
+        200:
+          description: Delete participant successfully.
+        400:
+          description: Delete participant failed.
+      security:
+        - bearerAuth: []
+  
+  /quote:
+     get:
+      tags:
+        - "quote"
+      summary: get all quote
+      produces:
+        - application/json
+      parameters:        
+        - in: query
+          name: limit
+          type: string
+          description: number of participant in a page         
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (name, -updatedAt)
+      responses:
+        200:
+          description: get quote successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "description": "string", 
+              "quote": "string",
+              "avatar": "path",
+            }
+        400:
+          description: quote is not found. 
+  /quote/{quoteId}:
+    get:
+      tags:
+        - "quote"
+      summary: get quote by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: quoteId
+          type: string
+          required: true
+          description: Id of a quote 
+      responses:
+        200:
+          description: get quote successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "description": "string", 
+              "quote": "string",
+              "avatar": "path",  
+            }          
+        400:
+          description: quote is not found. 
+  /quote/service/{serviceId}:
+    get:
+      tags:
+        - "quote"
+      summary: get list of quotes by serviceId
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+      responses:
+        200:
+          description: get quote successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "description": "string", 
+              "quote": "string",
+              "avatar": "path",    
+            }          
+        400:
+          description: quote is not found.
+  /admin/quote/{serviceId}:
+    post:
+      tags:
+        - "quote"
+      summary: "Create a new quote"
+      consumes:
+        - multipart/form-data
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+        - in: formData
+          name: name
+          description: name of customer.
+          type: string 
+          required: true
+        - in: formData
+          name: description
+          description: description of customer.
+          type: string 
+          required: true
+        - in: formData
+          name: quote
+          description: detail of quote.
+          type: string 
+          required: true  
+        - in: formData
+          name: avatar
+          description: avatar of quote.
+          type: file   
+      responses:
+        200:
+          description: Create quote successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "description": "string", 
+              "quote": "string",
+              "avatar": "path",    
+            }        
+        400:
+          description: Create quote failed.
+      security:
+        - bearerAuth: []
+  /admin/quote/{quoteId}:
+    put:
+      tags:
+        - "quote"
+      summary: "Create a new quote"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: quoteId
+          type: string
+          required: true
+          description: Id of a quote 
+        - in: formData
+          name: name
+          description: name of customer.
+          type: string 
+        - in: formData
+          name: description
+          description: description of customer.
+          type: string 
+        - in: formData
+          name: quote
+          description: detail of quote.
+          type: string 
+        - in: formData
+          name: avatar
+          description: avatar of quote.
+          type: file  
+      responses:
+        200:
+          description: Create quote successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "description": "string", 
+              "quote": "string",
+              "avatar": "path",        
+            }        
+        400:
+          description: Create quote failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "quote"
+      summary: "Delete a existing quote"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: quoteId
+          type: string
+          required: true
+          description: Id of a quote 
+      responses:
+        200:
+          description: Delete quote successfully.
+        400:
+          description: Delete quote failed.
+      security:
+        - bearerAuth: []
+
+  /order/create:
+    post:
+      tags:
+        - "order"
+      summary: "Customer or Admin create a new order"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: order
+          description: a new order(if user is admin, fill in customerEmail/customerPhone)
+          schema:
+            type: object      
+            required: 
+            - serviceName, receiver, origin, destination     
+            properties:              
+              serviceName:
+                type: string
+              receiver: 
+                type: object
+                properties:
+                  name:
+                    type: string
+                  phone:
+                    type: string
+                  identity:
+                    type: string                                   
+              origin:
+                type: string               
+              destination:
+                type: string   
+              customerEmail:
+                type: string
+              customerPhone:
+                type: string            
+      responses:
+        200:
+          description: Create new order successfully.
+        400:
+          description: Create order failed.
+      security:
+        - bearerAuth: []
+  
+  /order:
+    get: 
+      tags:
+        - "order"
+      summary: Customer get list of their order
+      produces:
+        - application/json      
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: Number of page
+        - in: query
+          name: pageSize
+          type: string
+          description: Number of order in a page
+        - in: query
+          name: status
+          type: string
+          description: waiting/accepted/probably proceed/processing/completed/refused/cancel          
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by field name, -updatedAt
+      responses:
+        200:
+          description: get order successfully.
+          schema:
+            type: object
+            example: {
+              "orderId": "string",
+              "service": "string", 
+              "total_price": "string",   
+              "status": "string",
+              "origin": "string", 
+              "destination": "string",   
+              "receiver" : "string",
+            }          
+        400:
+          description: order is not found.
+      security:
+        - bearerAuth: []
+  /order/{orderId}:    
+    get: 
+      tags:
+        - "order"
+      summary: Customer get information of an order
+      produces:
+        - application/json     
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: Id of a order 
+      responses:
+        200:
+          description: get order successfully.
+          schema:
+            type: object
+            example: {
+              "orderId": "string",
+              "service": "string", 
+              "total_price": "string",   
+              "status": "string",
+              "origin": "string", 
+              "destination": "string",   
+              "receiver" : "string",
+            }          
+        400:
+          description: order is not found.
+      security:
+        - bearerAuth: []
+    put: 
+      tags:
+        - "order"
+      summary: Customer or Admin update information of an waiting order
+      produces:
+        - application/json     
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: Id of a order 
+        - in: body
+          name: updatedOrder
+          description: updatedOrder   
+          schema:
+            type: object                
+            properties:
+              serviceName:
+                type: string   
+              origin:
+                type: string  
+              destination:
+                type: string  
+      responses:
+        200:
+          description: updated order successfully.            
+        400:
+          description: order is not found.
+      security:
+        - bearerAuth: []
+
+  /admin/order:
+    get:
+      tags:
+        - "order"
+      summary: Admin get list of orders
+      produces:
+        - application/json      
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: Number of page
+        - in: query
+          name: pageSize
+          type: string
+          description: Number of order in a page
+        - in: query
+          name: status
+          type: string
+          description: waiting/accepted/probably proceed/processing/completed/refused/cancel          
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by field name, -updatedAt
+        - in: query
+          name: customerName
+          type: string
+          description: customer's name
+        - in: query
+          name: customerPhone
+          type: string
+          description: customer's phone
+        - in: query
+          name: customerEmail
+          type: string
+          description: customer's email
+      responses:
+        200:
+          description: get order successfully.
+          schema:
+            type: object
+            example: {
+              "orderId": "string",
+              "service": "string", 
+              "total_price": "string",   
+              "status": "string",
+              "origin": "string", 
+              "destination": "string",   
+              "receiver" : "string",
+            }          
+        400:
+          description: order is not found.
+      security:
+        - bearerAuth: []
+  /admin/order/{orderId}:
+    put:
+      tags:
+        - "order"
+      summary: Admin update order status
+      produces:
+        - application/json     
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: Id of a order 
+        - in: body
+          name: status
+          description: update status (waiting, accepted, processing, completed, refused)    
+          schema:
+            type: object                
+            properties:
+              status:
+                type: string
+      responses:
+        200:
+          description: update status successfully.
+          schema:
+            type: object
+            example: {
+              "orderId": "string",
+              "status": "string",              
+            }          
+        400:
+          description: order is not found.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "order"
+      summary: Admin delete order
+      produces:
+        - application/json     
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: Id of an order         
+      responses:
+        200:
+          description: delete order successfully.                  
+        400:
+          description: order is not found.
+      security:
+        - bearerAuth: [] 
+  /order/tracking/{lstOrderId}:
+    get:
+      tags:
+        - "order"
+      summary: anyone can get list of order
+      produces:
+        - application/json
+      parameters:
+      - in: path
+        name: lstOrderId
+        type: string
+        required: true
+        description: string of list of OrderIDs, which seperate by '&'
+      responses:
+        200:
+          description: request successfully
+          schema:
+            type: object
+            example: {
+              "orders": ["order1", "order2"],
+              "success": 5,
+              "failure": 2,
+            }
+
+  /product/{orderId}:
+    post:
+      tags:
+        - "product"
+      summary: "Customer add a new product to order"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: orderId of order
+        - in: body
+          name: products
+          description: array of products.
+          schema:
+            type: object      
+            properties:
+              products:
+                type: array
+                items:
+                  type: object    
+                  properties:              
+                    name: 
+                      type: string
+                    quantity:
+                      type: integer
+                    unit: 
+                      type: string   
+                      enum: ['m3', 'kg', 'ton']
+      
+      responses:
+        200:
+          description: Add product(s) successfully.
+        400:
+          description: Add product(s) failed.
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - "product"
+      summary: "Customer get product of an order"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: orderId of order         
+      responses:
+        200:
+          description: Get product successfully.
+          schema:
+            type: object
+            example: {
+                  "name": "string",
+                  "quantity": "string",
+                  "unit": "string",                 
+            }
+        400:
+          description: Get product failed.
+      security:
+        - bearerAuth: []
+  /product/{productId}:
+    put:
+      tags:
+        - "product"
+      summary: "Customer update product in waiting order"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: productId
+          type: string
+          required: true
+          description: productId
+        - in: body
+          name: product
+          description: updated product
+          schema:
+            type: object      
+            properties:
+              name: 
+                type: string
+              quantity:
+                type: integer
+              unit: 
+                type: string   
+                enum: ['m3', 'kg', 'ton']            
+      responses:
+        200:
+          description: Update product successfully.
+        400:
+          description: Update product failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "product"
+      summary: "Customer delete product in waiting order"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: productId
+          type: string
+          required: true
+          description: productId                      
+      responses:
+        200:
+          description: Delete product successfully.
+        400:
+          description: Delete product failed.
+      security:
+        - bearerAuth: []
+  /admin/product:
+    get:
+      tags:
+        - "product"
+      summary: "Admin get list of products"
+      consumes:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of product on a page
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: keyword
+          type: string
+          description: keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by (name, quantity, updatedAt)
+        - in: query
+          name: orderId
+          type: string
+          description:  orderId
+      responses:
+        200:
+          description: Get product successfully.
+          schema:
+            type: object
+            example: {
+                  "name": "string",
+                  "quantity": integer,
+                  "unit": "string",                 
+            }
+        400:
+          description: Get product failed.
+      security:
+        - bearerAuth: []
+  /admin/product/{orderId}:
+    post:
+      tags:
+        - "product"
+      summary: "Admin add a new product to order"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: orderId of order
+        - in: body
+          name: products
+          description: array of products.
+          schema:
+            type: object      
+            properties:
+              products:
+                type: array
+                items:
+                  type: object    
+                  properties:              
+                    name: 
+                      type: string
+                    quantity:
+                      type: integer
+                    unit: 
+                      type: string   
+                      enum: ['m3', 'kg', 'ton']
+      
+      responses:
+        200:
+          description: Add product(s) successfully.
+        400:
+          description: Add product(s) failed.
+      security:
+        - bearerAuth: []
+  /admin/product/{productId}:
+    put:
+      tags:
+        - "product"
+      summary: "Admin update product in waiting order"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: productId
+          type: string
+          required: true
+          description: productId
+        - in: body
+          name: product
+          description: updated product
+          schema:
+            type: object      
+            properties:
+              name: 
+                type: string
+              quantity:
+                type: integer
+              unit: 
+                type: string   
+                enum: ['m3', 'kg', 'ton']            
+      responses:
+        200:
+          description: Update product successfully.
+        400:
+          description: Update product failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "product"
+      summary: "Admin delete product in waiting order"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: productId
+          type: string
+          required: true
+          description: productId                      
+      responses:
+        200:
+          description: Delete product successfully.
+        400:
+          description: Delete product failed.
+      security:
+        - bearerAuth: []
+  
+  /career:
+    get:
+      tags:
+        - "career"
+      summary: get career information  
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of careers on a page
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: keyword
+          type: string
+          description: keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by
+        - in: query
+          name: department
+          type: string
+          description:  department
+        - in: query
+          name: type
+          type: string
+          description: type
+        - in: query
+          name: location
+          type: string
+          description:  location
+        - in: query
+          name: state
+          type: string
+          description: state
+      responses:
+        200:
+          description: get career information successfully.
+          schema:
+            type: object
+            example: {
+                  "name": "string",
+                  "type": "string",
+                  "description": "string",
+                  "location": "string",
+                  "state": "string",
+                  "bonus": "string",
+                  "deadline": "YYYY/MM/DD",
+                  "applicants": "object",
+            }
+        400:
+          description: career information is not found.        
+  /career/{careerId}:
+    get:
+      tags:
+        - "career"
+      summary: get career by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: careerId
+          type: string
+          required: true
+          description: Id of a career
+      responses:
+        200:
+          description: get career information successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "type": "string",
+              "description": "string",
+              "location": "string",
+              "state": "string",
+              "bonus": "string",
+              "deadline": "YYYY/MM/DD",
+              "applicants": "object",
+            }
+        400:
+          description: Career does not exist.
+        402:
+          description: career information is not found.
+    
+  /admin/career/{departmentId}:
+    post:
+        tags:
+          - "career"
+        summary: "Create a new career"
+        parameters:
+          - in: path
+            name: departmentId
+            type: string
+            required: true
+            description: Id of a department to put career in 
+          - in: body
+            name: career
+            description: a new career.
+            schema:
+              type: object
+              required: true
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                description:
+                  type: string
+                location:
+                  type: string
+                state:
+                  type: string
+                bonus:
+                  type: string
+                deadline:
+                  type: string
+                  format: date
+        responses:
+          200:
+            description: Create career successfully.
+            schema:
+              type: object
+              example: {
+                  "name": "string",
+                  "type": "string",
+                  "description": "string",
+                  "location": "string",
+                  "state": "string",
+                  "bonus": "string",
+                  "deadline": "YYYY/MM/DD",
+                  "applicants": "object",
+              }
+          400:
+            description: Create career failed.  
+        security:
+          - bearerAuth: []
+  /admin/career/{careerId}:
+    put:
+      tags:
+        - "career"
+      summary: admin change career status
+      produces:
+        - application/json        
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: careerId
+          type: string
+          required: true
+          description: Id of a career
+        - in: body
+          name: career
+          description: a new career.
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              description:
+                type: string
+              location:
+                type: string
+              state:
+                type: string
+              bonus:
+                type: string
+              deadline:
+                type: string
+                format: date
+      responses:
+        200:
+          description: change career status successfully.
+        400:
+          description: career cannot be found. 
+      security:
+        - bearerAuth: []                          
+    delete:
+      tags:
+        - "career"
+      summary: "Delete an existing career"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: careerId
+          type: string
+          required: true
+          description: Id of an career 
+      responses:
+        200:
+          description: Delete career successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete career failed.      
+      security:
+        - bearerAuth: [] 
+  /department:
+    get:
+      tags:
+        - "department"
+      summary: get department information
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of careers on a page
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: keyword
+          type: string
+          description: keyword
+        - in: query
+          name: sortBy
+          type: string
+          description: sort by
+      responses:
+        200:
+          description: get department information successfully.
+          schema:
+            type: object
+            example: {
+              "description": "string",
+            }
+        400:
+          description: department information is not found.
+          
+  /department/{departmentId}:
+    get:
+      tags:
+        - "department"
+      summary: get department by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: departmentId
+          type: string
+          required: true
+          description: Id of a department
+      responses:
+        200:
+          description: get department successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "description": "string",
+              "location": "string",
+              "director": "string",
+              "scale": "string",
+              "careers": "career",
+            }
+        400:
+          description: departmentId is not found.
+
+  /admin/department:
+    post:
+      tags:
+        - "department"
+      summary: "Create a new department"
+      parameters:
+        - in: body
+          name: department
+          schema:
+            type: object
+            required: true
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              location:
+                type: string
+              director:
+                type: string
+              scale:
+                type: number
+      responses:
+        200:
+          description: Create department successfully.
+          schema:
+            type: object
+            example: {
+                "name": "string",
+                "description": "string",
+                "location": "string",
+                "director": "string",
+                "scale": "number",
+                "careers": "career",
+            }
+        400:
+          description: Create department failed.
+      security:
+        - bearerAuth: [] 
+  /admin/department/{departmentId}:
+    put:
+      tags:
+        - "department"
+      summary: admin update department
+      produces:
+        - application/json
+      consumes:
+        - application/json
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: departmentId
+          type: string
+          required: true
+          description: Id of a department
+        - in: body
+          name: department
+          schema:
+            type: object
+            required: true
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              location:
+                type: string
+              director:
+                type: string
+              scale:
+                type: number
+      responses:
+        200:
+          description: change department update successfully.
+        400:
+          description: department cannot be found.
+      security:
+        - bearerAuth: [] 
+          
+    delete:
+      tags:
+        - "department"
+      summary: "Delete an existing department"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: departmentId
+          type: string
+          required: true
+          description: Id of a department
+      responses:
+        200:
+          description: Delete department successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete department failed.
+      security:
+        - bearerAuth: [] 
+  /feature:
+    get:
+      tags:
+        - "feature"
+      summary: get feature information
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of features on a page
+          parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+        - in: query
+          name: name
+          type: string
+          description: filter by name
+        - in: query
+          name: detail
+          type: string
+          description: filter by detail 
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (name, -updatedAt)
+      responses:
+        200:
+          description: get feature information successfully.
+          schema:
+            type: object
+            example: {
+                  "name": "string",
+                  "logo": "path",
+                  "detail": "string",
+            }
+        400:
+          description: career information is not found.  
+  /feature/{featureId}:
+    get:
+      tags:
+        - "feature"
+      summary: get feature by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: featureId
+          type: string
+          required: true
+          description: Id of a feature 
+      responses:
+        200:
+          description: get feature successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+              "detail": "string",              
+            }
+        400:
+          description: feature is not found.
+  /feature/service/{serviceId}:
+    get:
+      tags:
+        - "feature"
+      summary: get features by service id
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of features on a page
+          parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+      responses:
+        200:
+          description: get feature successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+              "detail": "string",              
+            }
+        400:
+          description: feature is not found.
+  /admin/feature/{serviceId}:
+    post:
+      tags:
+        - "feature"
+      summary: "Create a new feature"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: serviceId
+          schema: 
+            type: string
+          required: true
+          description: service id to add feature in
+        - in: body
+          name: feature
+          description: a new feature.
+          schema:
+            type: object
+            required:
+              - name
+              - detail
+            properties:
+              name:
+                type: string
+              detail:
+                type: string  
+        - in: formData
+          name: logo
+          type: file
+          description: a logo for feature.
+          required: true
+      requestBody:
+        content: 
+          multipart/form-data:
+            schema:            
+              type: object
+              properties:      
+                name:           
+                  type: string
+                detail:   
+                  type: string
+                logo: 
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Create feature successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+              "detail": "string",
+            }
+        400:
+          description: Create feature failed.
+      security:
+        - bearerAuth: []
+  /admin/feature/{featureId}:
+    put:
+      tags:
+        - "feature"
+      summary: "Update a existing feature"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: featureId
+          schema: 
+            type: string
+          required: true
+          description: feature id
+        - in: body
+          name: feature
+          description: a existing feature.
+          schema:
+            type: object
+            required:
+              - name
+              - detail
+            properties:
+              name:
+                type: string
+              detail:
+                type: string
+        - in: formData
+          name: logo
+          type: file
+          description: a logo for feature.
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - detail
+              properties:
+                name:
+                  type: string
+                logo:
+                  type: string
+                  format: base64 
+                detail:
+                  type: string
+      responses:
+        200:
+          description: Update feature successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "logo": "path",
+              "detail": "string",
+            }
+        400:
+          description: Update feature failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "feature"
+      summary: "Delete a existing feature"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: featureId
+          type: string
+          required: true
+          description: Id of a feature 
+      responses:
+        200:
+          description: Delete feature successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Update feature failed.
+  /notification:
+    get:
+      tags:
+        - notification
+      summary: Get list of notifications
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: limit
+          type: string
+          description: limitation of notifications in response
+      responses:
+        200:
+          description: request successfully.
+          schema:
+            example: ["notification1","notification2",]
+      security:
+        - bearerAuth: []
+    post:
+      tags:
+        - notification
+      summary: Send a notification to another
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: content
+          schema:
+            type: object
+            properties:
+              receiverId:
+                type: string
+              title:
+                type: string
+              message:
+                type: string
+              link:
+                type: string
+      responses:
+        200:
+          description: send the notification successfully.
+        404:
+          description: receiver's ID didn't exist.
+      security:
+        - bearerAuth: []
+  
+  /distance:
+    get:
+      tags:
+        - "distance"
+      summary: get distance information
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of distances on a page
+          parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order
+        - in: query
+          name: fromProvince
+          type: string
+          description: Origin province
+          required: true
+        - in: query
+          name: toProvince
+          type: string
+          description: Destination province
+          required: true
+      responses:
+        200:
+          description: get distance information successfully.
+          schema:
+            type: object
+            example: {
+                  "fromProvince": "string",
+                  "toProvince": "string",
+                  "zonecode": "string",
+                  "distance":  "number",
+            }
+        400:
+          description: distance information is not found.  
+  /distance/{distanceId}:
+    get:
+      tags:
+        - "distance"
+      summary: get distance by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: distanceId
+          type: string
+          required: true
+          description: Id of a distance 
+      responses:
+        200:
+          description: get distance successfully.
+          schema:
+            type: object
+            example: {
+              "fromProvince": "string",
+              "toProvince": "string",
+              "zonecode": "string",
+              "distance":  "number",            
+            }
+        400:
+          description: distance is not found.
+    put:
+      tags:
+        - "distance"
+      summary: "Update an existing distance zonecode"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: distanceId
+          schema: 
+            type: string
+          required: true
+          description: distance id
+        - in: body
+          name: distance
+          description: an existing distance.
+          schema:
+            type: object
+            required:
+              - zonecode
+            properties:              
+              zonecode:
+                type: string
+      responses:
+        200:
+          description: Update distance successfully.
+          schema:
+            type: object
+            example: {
+              "fromProvince": "string",
+              "toProvince": "string",
+              "zonecode": "string",
+              "distance":  "number",
+            }
+        400:
+          description: Update distance failed.
+      security:
+        - bearerAuth: []
+  /distance/service/{serviceId}:
+    get:
+      tags:
+        - "distance"
+      summary: get distances by service id
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of distances on a page
+          parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order
+        - in: query
+          name: fromProvince
+          type: string
+          description: Origin province
+        - in: query
+          name: toProvince
+          type: string
+          description: Destination province
+      responses:
+        200:
+          description: get distance successfully.
+          schema:
+            type: object
+            example: {
+              "fromProvince": "string",
+              "toProvince": "string",
+              "zonecode": "string",
+              "distance":  "number",          
+            }
+        400:
+          description: distance is not found.
+  /admin/distance/create/{serviceId}:
+    post:
+      tags:
+        - "distance"
+      summary: "Create a new distance"
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          schema: 
+            type: string
+          required: true
+          description: service id to add distance in
+        - in: body
+          name: distance
+          description: a new distance.
+          schema:
+            type: object
+            required:
+              - fromProvince
+              - toProvince
+              - zonecode
+              - dist
+            properties:
+              fromProvince:
+                type: string
+              toProvince:
+                type: string
+              zonecode:
+                type: string
+              dist:
+                type: number
+      responses:
+        200:
+          description: Create distance successfully.
+          schema:
+            type: object
+            example: {
+              "fromProvince": "string",
+              "toProvince": "string",
+              "zonecode": "string",
+              "distance":  "number",
+            }
+        400:
+          description: Create distance failed.
+      security:
+        - bearerAuth: []
+  /admin/distance/{distanceId}:
+    put:
+      tags:
+        - "distance"
+      summary: "Update an existing distance"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: distanceId
+          schema: 
+            type: string
+          required: true
+          description: distance id
+        - in: body
+          name: distance
+          description: an existing distance.
+          schema:
+            type: object
+            required:
+              - fromProvince
+              - toProvince
+              - zonecode
+              - dist
+            properties:
+              fromProvince:
+                type: string
+              toProvince:
+                type: string
+              zonecode:
+                type: string
+              dist:
+                type: number
+      responses:
+        200:
+          description: Update distance successfully.
+          schema:
+            type: object
+            example: {
+              "fromProvince": "string",
+              "toProvince": "string",
+              "zonecode": "string",
+              "distance":  "number",
+            }
+        400:
+          description: Update distance failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "distance"
+      summary: "Delete an existing distance"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: distanceId
+          type: string
+          required: true
+          description: Id of a distance 
+      responses:
+        200:
+          description: Delete distance successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete distance failed.
+      security:
+        - bearerAuth: []
+  /price/{priceId}:
+    get:
+      tags:
+        - "price"
+      summary: get price by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: priceId
+          type: string
+          required: true
+          description: Id of a price 
+      responses:
+        200:
+          description: get price successfully.
+          schema:
+            type: object
+            example: {
+              "uKG": "string",
+              "uM3": "string",
+              "uTON": "string",        
+            }
+        400:
+          description: price is not found.
+  /price/service/{serviceId}:
+    get:
+      tags:
+        - "price"
+      summary: get prices by service id
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of prices on a page
+          parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+      responses:
+        200:
+          description: get price successfully.
+          schema:
+            type: object
+            example: {
+              "uKG": "string",
+              "uM3": "string",
+              "uTON": "string",       
+            }
+        400:
+          description: price is not found.
+  /admin/price/create/{serviceId}:
+    post:
+      tags:
+        - "price"
+      summary: "Create a new price"
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          schema: 
+            type: string
+          required: true
+          description: service id to add price in
+        - in: body
+          name: price
+          description: a new price.
+          schema:
+            type: object
+            required:
+              - kg
+              - ton
+              - m3
+            properties:
+              kg:
+                type: object
+                required:
+                  - next
+                  - sidestep
+                  - prices
+                properties:
+                  next:
+                    type: string
+                  sidestep:
+                    type: number
+                  prices:
+                    type: array
+                    items:
+                      type: number
+              ton:
+                type: object
+                required:
+                  - next
+                  - sidestep
+                  - prices
+                properties:
+                  next:
+                    type: string
+                  sidestep:
+                    type: number
+                  prices:
+                    type: array
+                    items:
+                      type: number
+              m3:
+                type: object
+                required:
+                  - next
+                  - sidestep
+                  - prices
+                properties:
+                  next:
+                    type: string
+                  sidestep:
+                    type: number
+                  prices:
+                    type: array
+                    items:
+                      type: number
+      responses:
+        200:
+          description: Create price successfully.
+          schema:
+            type: object
+            example: {
+              "uKG": "string",
+              "uM3": "string",
+              "uTON": "string", 
+            }
+        400:
+          description: Create price failed.
+      security:
+        - bearerAuth: []
+  /admin/price/{priceId}:
+    put:
+      tags:
+        - "price"
+      summary: "Update an existing price"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: priceId
+          schema: 
+            type: string
+          required: true
+          description: price id
+        - in: body
+          name: price
+          description: a new price.
+          schema:
+            type: object
+            required:
+              - kg
+              - ton
+              - m3
+            properties:
+              kg:
+                type: object
+                required:
+                  - next
+                  - sidestep
+                  - prices
+                properties:
+                  next:
+                    type: string
+                  sidestep:
+                    type: number
+                  prices:
+                    type: array
+                    items:
+                      type: number
+              ton:
+                type: object
+                required:
+                  - next
+                  - sidestep
+                  - prices
+                properties:
+                  next:
+                    type: string
+                    description: "true"
+                  sidestep:
+                    type: number
+                  prices:
+                    type: array
+                    items:
+                      type: number
+              m3:
+                type: object
+                required:
+                  - next
+                  - sidestep
+                  - prices
+                properties:
+                  next:
+                    type: string
+                  sidestep:
+                    type: number
+                  prices:
+                    type: array
+                    items:
+                      type: number
+      responses:
+        200:
+          description: Update price successfully.
+          schema:
+            type: object
+            example: {
+              "uKG": "string",
+              "uM3": "string",
+              "uTON": "string", 
+            }
+        400:
+          description: Update price failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "price"
+      summary: "Delete an existing price"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: priceId
+          type: string
+          required: true
+          description: Id of a price 
+      responses:
+        200:
+          description: Delete price successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete price failed.
+      security:
+        - bearerAuth: []
+  /priceList:
+    get:
+      tags:
+        - "priceList"
+      summary: get priceList by province
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: pageSize
+          type: string
+          description: limit number of priceLists on a page
+          parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: province
+          type: string
+          required: true
+          description: Province of a priceList 
+      responses:
+        200:
+          description: get priceList successfully.
+          schema:
+            type: object
+            example: {
+              "province": "string",
+              "file": "string",      
+            }
+        400:
+          description: priceList is not found.
+  /admin/priceList/{serviceId}:
+    post:
+      tags:
+        - "priceList"
+      summary: "Create a new priceList"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+        - in: formData
+          name: province
+          description: Province name to which the price files are associated.
+          type: string
+          required: true   
+        - in: formData
+          name: file
+          description: file for priceList.
+          type: file  
+          required: true        
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                province:           
+                  type: string                
+                file: 
+                  type: string
+                  format: base64                 
+      responses:
+        200:
+          description: Create priceList successfully.
+          schema:
+            type: object
+            example: {
+              "province": "string",
+              "file": "string",    
+            }
+        400:
+          description: Create priceList failed.
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "priceList"
+      summary: "Modify a priceList"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: query
+          name: province
+          type: string
+          required: true
+          description: Province of a priceList 
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+        - in: formData
+          name: file
+          description: New priceList file.
+          type: file          
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                file: 
+                  type: string
+                  format: base64
+      responses:
+        200:
+          description: Update priceList successfully.
+          schema:
+            type: object
+            example: {
+              "province": "string",
+              "file": "string",    
+            }
+        400:
+          description: Update priceList failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "priceList"
+      summary: "Delete an existing priceList"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service containing priceList
+        - in: query
+          name: province
+          type: string
+          required: true
+          description: province
+      responses:
+        200:
+          description: Delete priceList successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        400:
+          description: Delete priceList failed.
+      security:
+        - bearerAuth: []
+  /service:
+    get:
+      tags:
+        - "service"
+      summary: get delivery service
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: pageSize
+          type: string
+          description: number of service in a page 
+        - in: query
+          name: keyword
+          type: string
+          description: keyword to be searched
+        - in: query
+          name: sortBy
+          type: string
+          description: sorting condition
+        - in: query
+          name: target
+          type: string
+          description: target filter
+        - in: query
+          name: tip
+          type: string
+          description: tip filter
+      responses:
+        200:
+          description: get service successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "sub_detail": "string",    
+              "target": "string",   
+              "tip" : "string",
+              "quotes": ["quote1", "quote2"],
+              "logo": "path",
+              "banner": "path",
+              "features": ["feature1", "feature2"],    
+              "participants": ["participant1", "participant2"],   
+              "price": "string",  
+              "distances": ["distance1", "distance"],   
+              "price_files": ["path1", "path2"],       
+            }
+        400:
+          description: service is not found.  
+  /service/{service}:
+    get:
+      tags:
+        - "service"
+      summary: get delivery service by id or name
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: service
+          type: string
+          description: Id/Name of a service 
+          required: true
+      responses:
+        200:
+          description: get service successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "sub_detail": "string",    
+              "target": "string",   
+              "tip" : "string",
+              "quotes": ["quote1", "quote2"],
+              "logo": "path",
+              "banner": "path",
+              "features": ["feature1", "feature2"],    
+              "participants": ["participant1", "participant2"],     
+              "price": "string",  
+              "distances": ["distance1", "distance"],   
+              "price_files": ["path1", "path2"],          
+            }          
+        400:
+          description: service is not found.    
+  /admin/service:
+    post:
+      tags:
+        - "service"
+      summary: "Create a new service"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: service
+          description: a new service.
+          schema:
+            type: object      
+            required: 
+            - name, sub_detail, target   
+            properties:
+              name:
+                type: string
+              sub_detail: 
+                type: string
+              target:
+                type: string     
+              tip:
+                type: string               
+      responses:
+        200:
+          description: Create new service successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "sub_detail": "string",    
+              "target": "string",   
+              "tip" : "string",
+              "quotes": ["quote1", "quote2"],
+              "logo": "path",
+              "banner": "path",
+              "features": ["feature1", "feature2"],    
+              "participants": ["participant1", "participant2"],     
+              "price": "string",  
+              "distances": ["distance1", "distance"],   
+              "price_files": ["path1", "path2"],            
+            }    
+        400:
+          description: Create service failed.
+      security:
+        - bearerAuth: []
+  /admin/service/banner/{serviceId}:
+    post:
+      tags:
+        - "service"
+      summary: "Upload service banner"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+        - in: formData
+          name: banner
+          description: banner of service.
+          type: file          
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                banner: 
+                  type: string
+                  format: base64
+      responses:
+        200:
+          description: Upload service banner successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "sub_detail": "string",    
+              "target": "string",   
+              "tip" : "string",
+              "quotes": ["quote1", "quote2"],
+              "logo": "path",
+              "banner": "path",
+              "features": ["feature1", "feature2"],    
+              "participants": ["participant1", "participant2"],     
+              "price": "string",  
+              "distances": ["distance1", "distance"],   
+              "price_files": ["path1", "path2"],            
+            }        
+        400:
+          description: Upload service banner failed.
+      security:
+        - bearerAuth: []
+  /admin/service/logo/{serviceId}:
+    post:
+      tags:
+        - "service"
+      summary: "Upload service logo"
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+        - in: formData
+          name: logo
+          description: logo of service.
+          type: file          
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:      
+                logo: 
+                  type: string
+                  format: base64
+      responses:
+        200:
+          description: Upload service logo successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "sub_detail": "string",    
+              "target": "string",   
+              "tip" : "string",
+              "quotes": ["quote1", "quote2"],
+              "logo": "path",
+              "banner": "path",
+              "features": ["feature1", "feature2"],    
+              "participants": ["participant1", "participant2"],     
+              "price": "string",  
+              "distances": ["distance1", "distance"],   
+              "price_files": ["path1", "path2"],            
+            }        
+        400:
+          description: Upload service logo failed.
+      security:
+        - bearerAuth: []
+  /admin/service/{serviceId}:
+    put:
+      tags:
+        - "service"
+      summary: "Update a existing service"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          schema: 
+            type: string
+          required: true
+          description: service id
+        - in: body
+          name: service
+          description: an existing service.
+          schema:
+            type: object
+            type: object      
+            required: 
+            - name, sub_detail, target   
+            properties:
+              name:
+                type: string
+              sub_detail: 
+                type: string
+              target:
+                type: string                  
+      responses:
+        200:
+          description: Update service successfully.
+          schema:
+            type: object
+            example: {
+              "name": "string",
+              "sub_detail": "string",    
+              "target": "string",   
+              "tip" : "string",
+              "quotes": ["quote1", "quote2"],
+              "logo": "path",
+              "banner": "path",
+              "features": ["feature1", "feature2"],    
+              "participants": ["participant1", "participant2"],     
+              "price": "string",  
+              "distances": ["distance1", "distance"],   
+              "price_files": ["path1", "path2"],            
+            }      
+        400:
+          description: Update service failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "service"
+      summary: "Delete an existing service"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceId
+          type: string
+          required: true
+          description: Id of a service 
+      responses:
+        200:
+          description: Delete service successfully.
+        400:
+          description: Delete service failed.
+      security:
+        - bearerAuth: []
+
+  /customer:
+    get:
+      tags:
+        - customer
+      summary: Get list of customers, get customer by id, search and sort, filter by customer type
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: id of customer
+        - in: query
+          name: keyword
+          type: string
+          description: keyword to search
+        - in: query
+          name: sort
+          type: string
+          description: sort by 1 or -1 (ascending or descending)
+        - in: query
+          name: filter
+          type: string
+          description: business, passers or intermediary
+      responses:
+        200:
+          description: request successfully.
+      security:
+        - bearerAuth: []
+  /admin/customer/{id}:
+    put:
+      tags:
+        - customer
+      summary: Update a customer
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+        - in: body
+          name: Customer information to update
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              address:
+                type: string
+              description:
+                type: string
+              customer_type:
+                type: string
+              rank_passers:
+                type: object
+                properties:
+                  point: 
+                    type: number
+                  level: 
+                    type: string
+              companyTaxcode_business:
+                type: string
+              accepted_business:
+                type: boolean
+      responses:
+        200:
+          description: Update customer successfully.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:      
+        - customer
+      summary: Delete a customer
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+      responses:
+        200:
+          description: Delete customer successfully.
+      security:
+        - bearerAuth: []        
+  /applicant/{careerId}:
+    post:
+      tags:
+        - "applicant"
+      summary: "Create a new applicant"
+      consumes:
+        - multipart/form-data
+        - application/json
+      parameters:
+        - in: path
+          name: careerId
+          type: string
+          required: true
+          description: Id of a career 
+          required: true
+        - in: formData
+          name: firstName
+          description: firstName of applicant.
+          type: string 
+          required: true
+        - in: formData
+          name: lastName
+          description: lastName of applicant.
+          required: true
+        - in: formData
+          name: phoneNumber
+          description: phoneNumber of applicant.
+          type: string 
+          required: true
+        - in: formData
+          name: email
+          description: email of applicant.
+          type: string 
+          required: true
+        - in: formData
+          name: source
+          description: source of interest of applicant(staff, friend, email, phone, facebook, linkedin, search, event, other).
+          type: string 
+          required: true
+        - in: formData
+          name: message
+          description: Custom message.
+          type: string  
+          required: true  
+        - in: formData
+          name: file
+          description: CV file of applicant.
+          type: file 
+          required: true         
+      responses:
+        200:
+          description: Create applicant successfully.
+          schema:
+            type: object
+            example: {
+              "firstName": "string",
+              "lastName": "string",    
+              "phoneNumber": "string",   
+              "email" : "string",
+              "source": "string",
+              "message": "string",
+              "status": "string",    
+            }        
+        400:
+          description: Create applicant failed.
+  /admin/applicant:
+    get:
+      tags:
+        - "applicant"
+      summary: get applicant
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          type: string
+          description: num of page
+        - in: query
+          name: pageSize
+          type: string
+          description: number of applicants in a page 
+        - in: query
+          name: sortBy
+          type: string
+          description: sort in order (firstName, lastName, -updatedAt)
+        - in: query
+          name: keyword
+          type: string
+          description: search by keyword
+        - in: query
+          name: department
+          type: string
+          description: filter by department
+        - in: query
+          name: type
+          type: string
+          description: filter by type
+        - in: query
+          name: location
+          type: string
+          description: filter by location
+        - in: query
+          name: state
+          type: string
+          description: filter by state
+      responses:
+        200:
+          description: get applicant successfully.
+          schema:
+            type: object
+            example: {
+              "firstName": "string",
+              "lastName": "string",    
+              "phoneNumber": "string",   
+              "email" : "string",
+              "source": "string",
+              "message": "string",
+              "status": "string",       
+            }          
+        400:
+          description: applicant is not found.  
+      security:
+        - bearerAuth: []
+  /admin/applicant/{applicantId}:
+    get:
+      tags:
+        - "applicant"
+      summary: get applicant by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: applicantId
+          type: string
+          required: true
+          description: Id of an applicant 
+      responses:
+        200:
+          description: get applicant successfully.
+          schema:
+            type: object
+            example: {
+              "firstName": "string",
+              "lastName": "string",    
+              "phoneNumber": "string",   
+              "email" : "string",
+              "source": "string",
+              "message": "string",
+              "status": "string",       
+            }          
+        400:
+          description: applicant is not found.
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "applicant"
+      summary: "Update a existing applicant status"
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: applicantId
+          schema: 
+            type: string
+          required: true
+          description: applicant id
+        - in: body
+          name: applicant
+          description: an existing applicant.
+          schema:
+            type: object      
+            required: 
+            - status   
+            properties:
+              status:
+                type: string
+                description: (approved, pending, rejected)                 
+      responses:
+        200:
+          description: Update applicant successfully.
+          schema:
+            type: object
+            example: {
+              "firstName": "string",
+              "lastName": "string",    
+              "phoneNumber": "string",   
+              "email" : "string",
+              "source": "string",
+              "message": "string",
+              "status": "string",          
+            }      
+        400:
+          description: Update applicant failed.
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "applicant"
+      summary: "Delete an existing applicant"
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: applicantId
+          type: string
+          required: true
+          description: Id of a applicant 
+      responses:
+        200:
+          description: Delete applicant successfully.
+        400:
+          description: Delete applicant failed.
+      security:
+        - bearerAuth: []
+  /admin/staff:
+    get:
+      tags: 
+        - staff
+      summary: get list of staffs
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: id of staff
+        - in: query
+          name: keyword
+          type: string
+          description: keyword for searching staff 
+        - in: query
+          name: sort
+          type: number
+          description: sort staff by order
+        - in: query
+          name: filter
+          type: string
+          description: admin, driver, shipper, storekeeper or staff
+      responses:
+        200:
+          description: Get staff information successfully.
+        400:
+          description: Get staff information failed.
+      security:
+        - bearerAuth: []
+  /admin/staff/{staffId}:
+    delete:
+      tags:
+        - staff
+      summary: Delete staff by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: staffId
+          type: string
+          description: id of staff  
+      responses:
+        200:
+          description: delete staff successfully.
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - staff
+      summary: Update staff by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: staffId
+          type: string
+          description: id of staff
+        - in: body
+          name: update content
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              staff_type:
+                type: string
+      responses:
+        200:
+          description: Update staff information successfully.
+        400:
+          description: Update staff information failed.
+      security:
+        - bearerAuth: []
+  /admin/receiver:
+    get:
+      tags: 
+        - receiver
+      summary: get list of receivers
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id
+          type: string
+          description: id of receiver 
+        - in: query
+          name: keyword
+          type: string
+          description: keyword for searching receiver 
+        - in: query
+          name: sort
+          type: number
+          description: sort receiver by order
+      responses:
+        200:
+          description: get receiver successfully.
+          schema:
+            type: object
+              example: {
+                "name": "string",
+                "phone": "string",
+                "identity": "string",
+              }
+        400:
+          description: Receiver not found.
+      security:
+        - bearerAuth: []
+  /admin/receiver/{receiverId}:
+    put:
+      tags:
+        - receiver
+      summary: Update receiver by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: receiverId
+          type: string
+          description: id of receiver 
+        - in: body
+          name: update content
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              phone:
+                type: string
+              identity:
+                type: string
+      responses:
+        200:
+           description: Update receiver successfully. 
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - receiver
+      summary: Delete receiver by id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: receiverId
+          type: string
+          description: id of receiver  
+      responses:
+        200:
+          description: delete receiver successfully.
+      security:
+        - bearerAuth: []
+  /receiver/{orderId}:
+    put:
+      tags:
+        - receiver
+      summary: Update receiver by customer if order is waiting
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          description: id of order to check 
+        - in: body
+          name: update content
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              phone:
+                type: string
+              identity:
+                type: string
+      responses:
+        200:
+           description: Update receiver successfully. 
+      security:
+        - bearerAuth: []
+securityDefinitions:
+  bearerAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+
+  
