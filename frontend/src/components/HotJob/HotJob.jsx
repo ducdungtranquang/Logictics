@@ -38,6 +38,29 @@ const HotJob = ({ setDetail }) => {
         }
     }
 
+    const data = [
+        {
+            name:"IT",
+            location:"Ha Noi",
+        },
+        {
+            name:"Lai xe",
+            location:"Ha Noi",
+        },
+        {
+            name:"Admin",
+            location:"Ha Noi",
+        },
+        {
+            name:"Fullstack devloper",
+            location:"Ha Noi",
+        },
+        {
+            name:"Quan ly nhan su",
+            location:"Ha Noi",
+        },
+    ]
+
     useEffect(() => {
         getDataFromApi()
     }, [])
@@ -46,9 +69,9 @@ const HotJob = ({ setDetail }) => {
         <div className="w-[100%]">
             <h2 className="text-[24px] sm:text-[32px] font-bold mb-[16px] sm:mb-[28px] truncate">Việc làm nổi bật</h2>
 
-            {hotJob && (
+            {data && (
                 <>
-                    {hotJob.map((job, index) => {
+                    {data.map((job, index) => {
                         return (
                             <div
                                 key={index}

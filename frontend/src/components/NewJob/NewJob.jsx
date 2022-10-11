@@ -34,6 +34,14 @@ const NewJob = ({ setDetail }) => {
             "deadline": "YYYY/MM/DD",
             "applicants": "object"
         },
+        {
+            name:"IT",
+            location:"Ha Noi",
+        },
+        {
+            name:"Lai xe",
+            location:"Ha Noi",
+        },
 
     ];
 
@@ -68,7 +76,7 @@ const NewJob = ({ setDetail }) => {
             <h2 className="text-[24px] sm:text-[32px] font-bold mb-[16px] sm:mb-[28px] truncate">Việc làm mới</h2>
             {newJob && (
                 <>
-                    {newJob.map((job, index) => {
+                    {job.map((job, index) => {
                         return (
                             <div
                                 key={index}
