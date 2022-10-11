@@ -1,5 +1,4 @@
 import React from 'react';
-import Logo from '../../assets/images/logo.svg';
 import lifeInJT from '../../assets/images/lijt1.png';
 import { faCity, faAward, faFutbolBall, faHeart, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,7 +19,7 @@ const LifeInJTDetail = () => {
                         thế hệ tương lai.
                     </p>
                     <h4 className="flex gap-2 mb-4 text-xl font-bold">
-                        Chân dung đồng đội tại <img src={Logo} alt="" />
+                        Chân dung đồng đội tại <img src="../../public/z3789768425152_f4d11b7e0d55e58ca5e7eca71f01706c.jpg" alt="" />
                     </h4>
                     <div className="gap-2 mb-4 font-bold tracking-wide md:grid md:grid-cols-2 ">
                         <div className="box-content flex items-center gap-4 p-4 border rounded-lg">

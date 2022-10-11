@@ -138,7 +138,7 @@ const Header = () => {
         </div>
         <div className="hidden sm:block">
           <Link to="/">
-            <img src={logoJT} className="h-[80px]" alt="logo-JnT"/>
+            <img src="z3789768425152_f4d11b7e0d55e58ca5e7eca71f01706c.jpg" className="h-[60px]" alt="logo-JnT"/>
           </Link>
         </div>
         <ul className="hidden lg:flex h-full justify-center items-center m-0">

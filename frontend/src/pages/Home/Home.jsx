@@ -298,7 +298,7 @@ const Home = () => {
         <div>
           <a href="/">
             <img
-              src="https://i.ytimg.com/vi/h7QedpfpWQ0/maxresdefault.jpg"
+              src="https://images.vietnamworks.com/logo/1392x326%202_120733.png"
               className="w-full h-[200px] md:h-[300px] lg:h-[550px] object-cover"
               alt="banner"
             />
@@ -307,8 +307,8 @@ const Home = () => {
         <div>
           <a href="/">
             <img
-              // src="https://jtexpress.vn/storage/app/uploads/public/629/6ce/a24/6296cea2443e2392069160.jpg"
-              src="https://ntlogistics.vn/tin-tuc/wp-content/uploads/2020/05/7e054b1d577caa22f36d-scaled.jpg"
+              src="https://www.vietnamworks.com/_next/image?url=https%3A%2F%2Fimages.vietnamworks.com%2Fcompany-assets%2Fimages%2Fbanner-default-company.png&w=1920&q=75"
+              // src="https://ntlogistics.vn/tin-tuc/wp-content/uploads/2020/05/7e054b1d577caa22f36d-scaled.jpg"
               className="w-full h-[200px] md:h-[300px] lg:h-[550px] object-cover"
               alt="banner"
             />
@@ -317,7 +317,7 @@ const Home = () => {
         <div>
           <a href="/">
             <img
-              src="https://ntlogistics.vn/tin-tuc/wp-content/uploads/2021/08/SGK-re.jpg"
+              src="https://images02.vietnamworks.com//companyprofile/Mcredit/vi/Cover_1_.jpg"
               className="w-full h-[200px] md:h-[300px] lg:h-[550px] object-cover"
               alt="banner"
             />
@@ -334,7 +334,7 @@ const Home = () => {
           <TabPane
             tab={
               <div className="text-lg h-[30px] text-[#fcd535]">
-                Tra cứu đơn hàng
+                Tra cứu cong viec
               </div>
             }
             key="vận đơn"
@@ -345,7 +345,7 @@ const Home = () => {
                   value={keyOrder}
                   onChange={(e) => setKeyOrder(e.target.value)}
                   className="border border-gray-300 text-[#F0B90B] text-sm rounded focus:ring-yellow-500 focus:border-yellow-500 block w-full p-3 mb-2 lg:mb-0   "
-                  placeholder="Nhập mã vận đơn của bạn (cách nhau bới dấu phẩy), tối đa 10 vận đơn"
+                  placeholder="Nhập thong tin tuyen dung"
                 ></input>
                 <Link
                   to="tra-cuu/van-don"
@@ -364,7 +364,7 @@ const Home = () => {
               </form>
             </div>
           </TabPane>
-          <TabPane
+          {/* <TabPane
             tab={
               <div className="text-lg h-[30px] text-[#fcd535]">
                 Tra cứu bưu cục
@@ -432,7 +432,7 @@ const Home = () => {
               </Link>
             }
             key="bảng giá"
-          ></TabPane>
+          ></TabPane> */}
         </Tabs>
       </div>
 

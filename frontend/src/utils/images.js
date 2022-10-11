@@ -1,7 +1,6 @@
 import topBanner from "../assets/images/banner.png";
 import bottomBanner from "../assets/images/slider-tuyen-dung.png";
 import lifeJT from "../assets/images/lijt1.png";
-import logo from "../assets/images/logo.svg";
 import image1 from "../assets/images/c1.png";
 import image2 from "../assets/images/c2.png";
 import image3 from "../assets/images/c3.png";
@@ -10,7 +9,7 @@ import image5 from "../assets/images/c5.png";
 import image6 from "../assets/images/c6.png";
 
 const Images = {
-  LOGO: logo,
+  LOGO: "../../public/z3789768425152_f4d11b7e0d55e58ca5e7eca71f01706c.jpg",
   TOP_BANNER: topBanner,
   BOTTOM_BANNER: bottomBanner,
   lifeJT,

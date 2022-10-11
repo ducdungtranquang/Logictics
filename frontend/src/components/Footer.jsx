@@ -46,7 +46,7 @@ const Footer = () => {
     <footer className="bg-[#e0e3e7]">
       <div className=" grid grid-cols-1 gap-x-[70px] lg:grid-cols-3 pt-[35px] mx-auto px-4 lg:px-0 container ">
         <div className="leading-6 ">
-          <img src={logoJT} className="h-[80px]" alt="logo-JnT" />
+          <img src="z3789768425152_f4d11b7e0d55e58ca5e7eca71f01706c.jpg" className="h-[80px]" alt="logo-JnT" />
           <h5 className="mb-4 font-extrabold">
             CÔNG TY TNHH MỘT THÀNH VIÊN CHUYỂN PHÁT NHANH THUẬN PHONG
           </h5>

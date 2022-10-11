@@ -130,23 +130,23 @@ function Register() {
     });
   };
   const otpsubmit = async () => { //submit otp
-    try{
+    try {
       const response = await axios({
-          method: 'post',
-          withCredentials: true,
-          url: `${END_POINT}/auth/verify-otp`,
-          data: {
-              otp: otp
-          }  
+        method: 'post',
+        withCredentials: true,
+        url: `${END_POINT}/auth/verify-otp`,
+        data: {
+          otp: otp
+        }
       });
       otp_success();
       navigate("/dang-nhap");
-    } catch(error) {
-        if(error.message == "Request failed with status code 400") {
-          otp_failed400();
-        }
-        if(error.message == "Request failed with status code 500") {
-          failed500();
+    } catch (error) {
+      if (error.message == "Request failed with status code 400") {
+        otp_failed400();
+      }
+      if (error.message == "Request failed with status code 500") {
+        failed500();
       }
     }
   }
@@ -179,25 +179,25 @@ function Register() {
     });
   };
   const otpupdate = async () => { //udate otp
-    try{
+    try {
       const response = await axios({
-          method: 'get',
-          withCredentials: true,
-          url: `${END_POINT}/auth/update-otp`,
-          param: {
-              verify_op: verify_op
-          }  
+        method: 'get',
+        withCredentials: true,
+        url: `${END_POINT}/auth/update-otp`,
+        param: {
+          verify_op: verify_op
+        }
       });
       update_success();
-    } catch(error) {
-        if(error.message == "Request failed with status code 400") {
-          update_failed400();
-        }
-        if(error.message == "Request failed with status code 404") {
-          update_failed404();
-        }
-        if(error.message == "Request failed with status code 500") {
-          failed500();
+    } catch (error) {
+      if (error.message == "Request failed with status code 400") {
+        update_failed400();
+      }
+      if (error.message == "Request failed with status code 404") {
+        update_failed404();
+      }
+      if (error.message == "Request failed with status code 500") {
+        failed500();
       }
     }
   }
@@ -249,7 +249,7 @@ function Register() {
     });
   };
   const onFinish = async () => {    //submit register form
-    try{
+    try {
       const response = await axios({
         method: 'post',
         withCredentials: true,
@@ -266,34 +266,35 @@ function Register() {
           verify_op: verify_op
         }
       });
-      if(customer_type != "business") {
+      if (customer_type != "business") {
         success();
         handleShowModal();
       }
       else {
         business_success();
-        setTimeout(() => {  navigate("/"); }, 4000);
+        setTimeout(() => { navigate("/"); }, 4000);
       }
-    } catch(error){
-      if(error.response.data.message == "user is exist"){
+    } catch (error) {
+      if (error.response.data.message == "user is exist") {
         existed();
       }
-      if(error.message == "Request failed with status code 400") {
+      if (error.message == "Request failed with status code 400") {
         failed400();
       }
-      if(error.message == "Request failed with status code 500") {
+      if (error.message == "Request failed with status code 500") {
         failed500();
       }
     }
   };
 
+  const [custommer, setCustomer] = useState(false)
+
   return (
     <div>
-      <>   
+      <>
         <div
-          className={`${
-            isModalVisible ? `block` : `hidden`
-          } overflow-y-auto overflow-x-hidden fixed  z-50 w-full top-0 left-0   h-full bg-[#1114]`}
+          className={`${isModalVisible ? `block` : `hidden`
+            } overflow-y-auto overflow-x-hidden fixed  z-50 w-full top-0 left-0   h-full bg-[#1114]`}
         >
           <div className="relative min-w-[350px] top-[15%] sm:min-w-[550px]  md:mx-auto flex justify-center items-center">
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 min-w-[350px] sm:min-w-[400px] mx-1 ">
@@ -313,20 +314,20 @@ function Register() {
                 <form className="space-y-4" >
                   <div>
                     <div className="relative">
-                      <input                                         
-                        placeholder="Nhập mã OTP"   
-                        name="OTP"           
+                      <input
+                        placeholder="Nhập mã OTP"
+                        name="OTP"
                         onChange={(e) => setOtp(e.target.value)}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white relative"
-                      />                    
-                    </div>                 
+                      />
+                    </div>
                   </div>
 
                   <div className="text-right dark:text-white">
-                      Mã hết hạn?
-                      <span className="font-semibold text-blue-700">
-                        <Button type="link" onClick={otpupdate}>Gửi lại OTP</Button>
-                      </span>
+                    Mã hết hạn?
+                    <span className="font-semibold text-blue-700">
+                      <Button type="link" onClick={otpupdate}>Gửi lại OTP</Button>
+                    </span>
                   </div>
 
                   <ButtonContainer>
@@ -340,69 +341,76 @@ function Register() {
           </div>
         </div>
       </>
-      <RegisForm> 
-          <div className="Regis">
-            <div className="Regis-header">
-              <Form
-                  form ={form}
+      <div>
+        <div className='flex mt-[8px]' style={{justifyContent:"center"}}>
+          <button onClick={() => setCustomer(true)}>Dang ky khach hang</button>
+          <button onClick={() => setCustomer(false)}>Dang ky nha tuyen dung</button>
+        </div>
+
+        {custommer === false && (
+          <RegisForm>
+            <div className="Regis">
+              <div className="Regis-header">
+                <Form
+                  form={form}
                   autoComplete="off"
                   labelCol={{ span: 10 }}
                   wrapperCol={{ span: 14 }}
                   onFinish={(onFinish)}
                   onFinishFailed={(error) => {
                     console.log({ error });
-                  } }
-              >
+                  }}
+                >
                   <Title level={2} className="text-center">
-                      Đăng kí
+                    Đăng kí
                   </Title>
 
                   <Form.Item
-                      name="name"
-                      label="Tên tài khoản"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng nhập tên tài khoản",
-                        },
-                      ]}
-                      hasFeedback
+                    name="name"
+                    label="Tên tài khoản"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên tài khoản",
+                      },
+                    ]}
+                    hasFeedback
                   >
-                      <Input placeholder="Nhập tên tài khoản" />
+                    <Input placeholder="Nhập tên tài khoản" />
                   </Form.Item>
 
                   <Form.Item
-                      name="email/phone"
-                      label="Email/Phone"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng nhập email hoặc số điện thoại",
-                        },                  
-                      ]}
-                      hasFeedback
-                      >
-                      <Input placeholder="Nhập email hoặc số điện thoại" />
+                    name="email/phone"
+                    label="Email/Phone"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập email hoặc số điện thoại",
+                      },
+                    ]}
+                    hasFeedback
+                  >
+                    <Input placeholder="Nhập email hoặc số điện thoại" />
                   </Form.Item>
 
                   <Form.Item
-                      name="password"
-                      label="Mật khẩu"
-                      rules={[
-                          {
-                            required: true,
-                            message: "Vui lòng nhập mật khẩu",
-                          },
-                          { 
-                            min: 6,
-                            message: "Mật khẩu phải dài hơn 6 chữ số",
-                          },
-                          {
-                            max: 24,
-                            message: "Mật khẩu chỉ được tối đa 24 chữ số",
-                          },
-                      ]}
-                      hasFeedback
+                    name="password"
+                    label="Mật khẩu"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập mật khẩu",
+                      },
+                      {
+                        min: 6,
+                        message: "Mật khẩu phải dài hơn 6 chữ số",
+                      },
+                      {
+                        max: 24,
+                        message: "Mật khẩu chỉ được tối đa 24 chữ số",
+                      },
+                    ]}
+                    hasFeedback
                   >
                     <Input.Password placeholder="Nhập mật khẩu" />
                   </Form.Item>
@@ -447,8 +455,8 @@ function Register() {
                   </Form.Item>
 
 
-                  <Form.Item 
-                    name="customer_type" 
+                  <Form.Item
+                    name="customer_type"
                     label="Khách hàng"
                     rules={[
                       {
@@ -486,25 +494,195 @@ function Register() {
                   </Form.Item>
 
                   <Form.Item wrapperCol={{ span: 24 }}>
-                      <div className='sign'>
-                          Bạn đã có tài khoản?  
-                          <Link to="/dang-nhap" className="font-semibold text-blue-700">
-                              Đăng nhập
-                          </Link>
-                      </div>
+                    <div className='sign'>
+                      Bạn đã có tài khoản?
+                      <Link to="/dang-nhap" className="font-semibold text-blue-700">
+                        Đăng nhập
+                      </Link>
+                    </div>
                   </Form.Item>
 
                   <Form.Item wrapperCol={{ span: 24 }}>
-                      <ButtonContainer>
-                          <Button block type="primary" htmlType="submit">
-                              Đăng ký
-                          </Button>
-                      </ButtonContainer>
+                    <ButtonContainer>
+                      <Button block type="primary" htmlType="submit">
+                        Đăng ký
+                      </Button>
+                    </ButtonContainer>
                   </Form.Item>
-              </Form>
+                </Form>
+              </div>
             </div>
-          </div>
-      </RegisForm>
+          </RegisForm>
+        )}
+
+        {custommer && (
+          <RegisForm>
+            <div className="Regis">
+              <div className="Regis-header">
+                <Form
+                  form={form}
+                  autoComplete="off"
+                  labelCol={{ span: 10 }}
+                  wrapperCol={{ span: 14 }}
+                  onFinish={(onFinish)}
+                  onFinishFailed={(error) => {
+                    console.log({ error });
+                  }}
+                >
+                  <Title level={2} className="text-center">
+                    Đăng kí
+                  </Title>
+
+                  <Form.Item
+                    name="name"
+                    label="Tên tài khoản"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên tài khoản",
+                      },
+                    ]}
+                    hasFeedback
+                  >
+                    <Input placeholder="Nhập tên tài khoản" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="email/phone"
+                    label="Email/Phone"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập email hoặc số điện thoại",
+                      },
+                    ]}
+                    hasFeedback
+                  >
+                    <Input placeholder="Nhập email hoặc số điện thoại" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="password"
+                    label="Mật khẩu"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập mật khẩu",
+                      },
+                      {
+                        min: 6,
+                        message: "Mật khẩu phải dài hơn 6 chữ số",
+                      },
+                      {
+                        max: 24,
+                        message: "Mật khẩu chỉ được tối đa 24 chữ số",
+                      },
+                    ]}
+                    hasFeedback
+                  >
+                    <Input.Password placeholder="Nhập mật khẩu" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="confirmPassword"
+                    label="Xác nhận mật khẩu"
+                    dependencies={["password"]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Mật khẩu không khớp"
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || getFieldValue("password") === value) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            "Mật khẩu không khớp"
+                          );
+                        },
+                      }),
+                    ]}
+                    hasFeedback
+                  >
+                    <Input.Password placeholder="Xác nhận mật khẩu" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="address"
+                    label="Địa chỉ"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập địa chỉ",
+                      },
+                    ]}
+                    hasFeedback
+                  >
+                    <Input placeholder="Nhập địa chỉ" />
+                  </Form.Item>
+
+
+                  <Form.Item
+                    name="customer_type"
+                    label="Khách hàng"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Xin vui lòng chọn loại khách hàng",
+                      },
+                    ]}
+                    hasFeedback
+                  >
+                    <Select placeholder="Chọn loại khách hàng">
+                      <Select.Option value="intermediary">Trung gian</Select.Option>
+                      <Select.Option value="business">Doanh nghiệp</Select.Option>
+                      <Select.Option value="passers">Khách vãng lai</Select.Option>
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item
+                    name="tax"
+                    label="CCCD"
+                    rules={[
+                      ({ getFieldValue }) => ({
+                        validator(_, tax) {
+                          if ((tax && getFieldValue("customer_type") === "business") || getFieldValue("customer_type") === "passers" || getFieldValue("customer_type") === "intermediary") {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            "Vui lòng nhập CCCD"
+                          );
+                        },
+                      }),
+                    ]}
+                    hasFeedback
+                  >
+                    <Input placeholder="CCCD" />
+                  </Form.Item>
+
+                  <Form.Item wrapperCol={{ span: 24 }}>
+                    <div className='sign'>
+                      Bạn đã có tài khoản?
+                      <Link to="/dang-nhap" className="font-semibold text-blue-700">
+                        Đăng nhập
+                      </Link>
+                    </div>
+                  </Form.Item>
+
+                  <Form.Item wrapperCol={{ span: 24 }}>
+                    <ButtonContainer>
+                      <Button block type="primary" htmlType="submit">
+                        Đăng ký
+                      </Button>
+                    </ButtonContainer>
+                  </Form.Item>
+                </Form>
+              </div>
+            </div>
+          </RegisForm>
+        )}
+      </div>
     </div>
   );
 }

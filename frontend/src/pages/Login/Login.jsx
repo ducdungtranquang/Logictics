@@ -148,93 +148,95 @@ function Login() {
         failed400();
       }
     }
-  };
-  return (
-    <LoginForm>
-      <div className="Login">
-        <div className="Login-header">
-          <Form
-            form={form}
-            autoComplete="off"
-            labelCol={{ span: 10 }}
-            wrapperCol={{ span: 14 }}
-            onFinish={onFinish}
-            onFinishFailed={(error) => {
-              console.log({ error });
-            }}
-          >
-            <Title level={2} className="text-center">
-              Đăng nhập
-            </Title>
 
-            <Form.Item
-              name="email/phone"
-              label="Email/Phone"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập email hoặc số điện thoại",
-                },
-              ]}
-              hasFeedback
+    return (
+      <LoginForm>
+        <div className="Login">
+          <div className="Login-header">
+            <Form
+              form={form}
+              autoComplete="off"
+              labelCol={{ span: 10 }}
+              wrapperCol={{ span: 14 }}
+              onFinish={onFinish}
+              onFinishFailed={(error) => {
+                console.log({ error });
+              }}
             >
-              <Input placeholder="Nhập email hoặc số điện thoại" />
-            </Form.Item>
+              <Title level={2} className="text-center">
+                Đăng nhập
+              </Title>
 
-            <Form.Item
-              name="password"
-              label="Mật khẩu"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập mật khẩu",
-                },
-                {
-                  min: 6,
-                  message: "Mật khẩu phải dài hơn 6 chữ số",
-                },
-                {
-                  max: 24,
-                  message: "Mật khẩu chỉ được tối đa 24 chữ số",
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password placeholder="Nhập mật khẩu" />
-            </Form.Item>
+              <Form.Item
+                name="email/phone"
+                label="Email/Phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập email hoặc số điện thoại",
+                  },
+                ]}
+                hasFeedback
+              >
+                <Input placeholder="Nhập email hoặc số điện thoại" />
+              </Form.Item>
 
-            <Form.Item wrapperCol={{ span: 24 }}>
-              <div className="sign">
-                Bạn chưa có tài khoản?
-                <Link to="/dang-ki" className="font-semibold text-blue-700">
-                  Đăng ký tài khoản
-                </Link>
-              </div>
-            </Form.Item>
+              <Form.Item
+                name="password"
+                label="Mật khẩu"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mật khẩu",
+                  },
+                  {
+                    min: 6,
+                    message: "Mật khẩu phải dài hơn 6 chữ số",
+                  },
+                  {
+                    max: 24,
+                    message: "Mật khẩu chỉ được tối đa 24 chữ số",
+                  },
+                ]}
+                hasFeedback
+              >
+                <Input.Password placeholder="Nhập mật khẩu" />
+              </Form.Item>
 
-            <Form.Item wrapperCol={{ span: 24 }}>
-              <div className="sign">
-                <Link
-                  to="/quen-mat-khau"
-                  className="font-semibold text-blue-700"
-                >
-                  Quên mật khẩu
-                </Link>
-              </div>
-            </Form.Item>
+              <Form.Item wrapperCol={{ span: 24 }}>
+                <div className="sign">
+                  Bạn chưa có tài khoản?
+                  <Link to="/dang-ki" className="font-semibold text-blue-700">
+                    Đăng ký tài khoản
+                  </Link>
+                </div>
+              </Form.Item>
 
-            <Form.Item wrapperCol={{ span: 24 }}>
-              <ButtonContainer>
-                <Button block type="primary" htmlType="submit">
-                  Đăng nhập
-                </Button>
-              </ButtonContainer>
-            </Form.Item>
-          </Form>
+              <Form.Item wrapperCol={{ span: 24 }}>
+                <div className="sign">
+                  <Link
+                    to="/quen-mat-khau"
+                    className="font-semibold text-blue-700"
+                  >
+                    Quên mật khẩu
+                  </Link>
+                </div>
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ span: 24 }}>
+                <ButtonContainer>
+                  <Button block type="primary" htmlType="submit">
+                    Đăng nhập
+                  </Button>
+                </ButtonContainer>
+              </Form.Item>
+            </Form>
+          </div>
         </div>
-      </div>
-    </LoginForm>
-  );
+      </LoginForm>
+    );
+  };
+
 }
 
 export default Login;
